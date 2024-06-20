@@ -1,33 +1,297 @@
 <!DOCTYPE html>
-<html lang="pl"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>irylek.eeu.pl</title>
-    <style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+<title>irylek.github.io</title>
+<div id="content">
+  <div id="channels">
+    <span class="chl" onclick="loadStream('https://ec06-krk3.cache.orange.pl/dai4/org1/vb/104/tvp1hd/index.m3u8', 'TVP1')"><img src="https://i.imgur.com/upAXwAe.png" class="chi "/><span class="ch">TVP1 HD</span></span>
+    <span class="chl" onclick="loadStream('https://ec04-waw4.cache.orange.pl/dai4/org2/vb/105/tvp2hd/index.m3u8', 'TVP2')"><img src="https://i.imgur.com/sqtvhHu.png" class="chi "/><span class="ch">TVP2 HD</span></span>
+    <span class="chl" onclick="toggleTVP3()"><img src="https://i.imgur.com/HsU7zgk.png" class="chi"/><span class="ch">TVP3 SD</span></span>
+    <div id="tvp3Channels" style="display: none; padding-left: 20px;">
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3warszawasd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">WARSZAWA</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3lublinsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">LUBLIN</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3bialystoksd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">BIAŁYSTOK</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3bydgoszczsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">BYDGOSZCZ</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3gdansksd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">GDAŃSK</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3katowicesd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">KATOWICE</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3kielcesd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">KIELCE</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3krakowsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">KRAKÓW</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3lodzsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">ŁÓDŹ</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3olsztynsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">OLSZTYN</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3opolesd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">OPOLE</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3poznansd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">POZNAŃ</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3rzeszowsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">RZESZÓW</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3szczecinsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">SZCZECIN</span></span>
+    <span class="chl" onclick="loadStream('https://cdndai.pl/tvp3wroclawsd/index.m3u8', 'TVP3 SD')"><img src="https://i.imgur.com/HsU7zgk.png" class="chi "/><span class="ch">WROCŁAW</span></span></div>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-562.php', 'POLSAT HD')"><img src="https://i.imgur.com/ShwQG5z.jpeg" class="chi "/><span class="ch">Polsat</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-565.php', 'TVN HD')"><img src="https://i.imgur.com/QfYVVvj.png" class="chi "/><span class="ch">TVN</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-444.php', 'TVN24 HD')"><img src="https://i.imgur.com/ABy2AYI.png" class="chi "/><span class="ch">TVN24</span></span>
+    <span class="chl" onclick="loadMpdStream('https://live-ipla-e1-82.pluscdn.pl/t3/24180/0/dash_rel_mp/63212030/live.mpd', 'TV4')"><img src="https://i.imgur.com/YGilUcx.png" class="chi "/><span class="ch">TV4</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-443.php', 'POLSAT NEWS HD')"><img src="https://i.imgur.com/yzsNl7C.jpeg" class="chi "/><span class="ch">Polsat News</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-564.php', 'POLSAT FILM HD')"><img src="https://i.imgur.com/JIT8j9Y.png" class="chi "/><span class="ch">Polsat Film</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-47.php', 'POLSAT SPORT HD')"><img src="https://i.imgur.com/Z6QpkJK.jpeg" class="chi "/><span class="ch">Polsat Sport</span></span>
+    <span class="chl" onclick="toggleCanal()"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi"/><span class="ch">CANAL+</span></span>
+    <div id="CanalChannels" style="display: none; padding-left: 20px;">
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-566.php', 'CANAL+ PREMIUM')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">Premium</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-567.php', 'CANAL+ PREMIUM')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">Family</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-570.php', 'CANAL+ PREMIUM')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">Seriale</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-48.php', 'CANAL+ PREMIUM')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">Sport</span></span></div>
+    <span class="chl" onclick="loadStream('https://stream.4fun.tv:8888/hls/4f.m3u8', '4FUN TV')"><img src="https://i.imgur.com/GbAg3W0.jpeg" class="chi "/><span class="ch">4FUN TV</span></span>
+    <span class="chl" onclick="loadIframeStream('https://dlhd.so/embed/stream-128.php', 'TVP Sport')"><img src="https://i.imgur.com/cLFzKZK.png" class="chi "/><span class="ch">TVP Sport</span></span>
+    <span class="chl" onclick="loadIframeStream('https://wilno.tvp.pl/65446663/ogladaj-online', 'TVP Wilno')"><img src="https://i.imgur.com/64yr9gM.png" class="chi"/><span class="ch">TVP Wilno</span></span>
+    <span class="chl" onclick="loadIframeStream('https://krainaabc.tvp.pl/tv-online', 'TVP ABC')"><img src="https://i.imgur.com/xnVQWTE.png" class="chi"/><span class="ch">TVP ABC</span></span>
+    <span class="chl" onclick="loadIframeStream('https://kultura2.tvp.pl', 'TVP KULTURA 2')"><img src="https://i.imgur.com/YVmOsnb.png" class="chi"/><span class="ch">TVP Kultura 2</span></span>
+    <span class="chl" onclick="loadIframeStream('https://historia.tvp.pl/52614342/kanal-historia-2', 'TVP HISTORIA 2')"><img src="https://s.tvp.pl/files/portale-v4/tvp-pl/images/tvp-historia.jpg" class="chi"/><span class="ch">TVP Historia 2</span></span>
+    <span class="chl" onclick="loadIframeStream('https://polonia.tvp.pl/44562671/tvp-polonia-stream', 'TVP Polonia')"><img src="https://i.imgur.com/j2k77Lb.png" class="chi "/><span class="ch">TVP Polonia</span></span>
+    <span class="chl" onclick="loadIframeStream('https://www.tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/RfjNU93.jpeg" class="chi "/><span class="ch">TVP Info</span></span>
+    <span class="chl" onclick="loadYouTubeStream('dzntyCTgJMQ', 'TV REPUBLIKA')"><img src="https://i.imgur.com/jXv6xkc.jpeg" class="chi "/><span class="ch">TV Republika</span></span>
+    <span class="chl" onclick="loadYouTubeId('UCPiu4CZlknkTworskK79CPg', 'wPolsce.PL')"><img src="https://i.imgur.com/aQ9Zc9K.png" class="chi "/><span class="ch">wPolsce.PL</span></span>
+    <span class="chl" onclick="loadIframeStream('https://strims.in/tv/tvtoya.php', 'TV Toya')"><img src="https://i.imgur.com/EboAP1s.jpeg" class="chi "/><span class="ch">TV Toya</span></span>
+    <span class="chl" onclick="loadStream('https://tvreg.klemit.net/regionalna/stream/index.m3u8', 'TV REGIONALNA')"><img src="https://i.imgur.com/hAxJfE7.jpeg" class="chi "/><span class="ch">TV Regionalna</span></span>
+    <span class="chl" onclick="loadStream('https://stream.sferatv.pl/sferatvlive/live.m3u8', 'SFERA TV')"><img src="https://i.imgur.com/ZuFB3VG.png" class="chi "/><span class="ch">Sfera TV</span></span>
+    <span class="chl" onclick="loadStream('http://94.246.128.53:1935/tv/dlaCiebieTv/playlist.m3u8', 'dlaCiebieTV')"><img src="https://i.imgur.com/bTSCTvP.jpeg" class="chi "/><span class="ch">dlaCiebieTV</span></span>
+    <span class="chl" onclick="loadStream('https://cdn3.wowza.com/1/ZHdrMWt1NjlDSzFu/bzdDVG10/hls/live/playlist.m3u8', 'EWTN Polska')"><img src="https://i.imgur.com/g8G7szz.png" class="chi "/><span class="ch">EWTN Polska</span></span>
+    <span class="chl" onclick="loadStream('https://s-pl-01.mediatool.tv/playout/tbpl-abr/index.m3u8', 'TV Biznesowa')"><img src="https://i.imgur.com/uCO2upl.png" class="chi "/><span class="ch">TV Biznesowa</span></span>
+    <span class="chl" onclick="loadStream('https://91-193-208-10.eimperium.pl/TVIMPERIUM/index.m3u8', 'TV Imperium')"><img src="https://i.imgur.com/wc7xxll.jpeg" class="chi "/><span class="ch">TV Imperium</span></span>
+    <span class="chl" onclick="loadYouTubeStream('__99KTHLOYY', 'TV Narew')"><img src="https://i.imgur.com/CuZiP9Z.jpeg" class="chi "/><span class="ch">TV Narew</span></span>
+    <span class="chl" onclick="loadYouTubeId('UC0vwjMGoZpwG_lLBuF6_ALA', 'TV Olsztyn')"><img src="https://i.imgur.com/alz7EnF.jpeg" class="chi "/><span class="ch">TV Olsztyn</span></span>
+    <span class="rli" onclick="loadRadio('https://radio.stream.smcdn.pl/timeradio-p/2380-1.aac/playlist.m3u8', '')"><img src="https://i.imgur.com/vqKhqHd.png" class="chi"/><span class="rh">RADIO ESKA</span></span>
+    <span class="rli" onclick="loadIframeStream('https://www.rmfon.pl/play,5', 'RMF FM')"><img src="https://i.imgur.com/S8QsCd4.png" class="chi"/><span class="rh">RMF FM</span></span>
+    <span class="rli" onclick="loadIframeStream('https://www.radiozet.pl/sluchaj/online/Radio-ZET-online.html', 'RADIO ZET')"><img src="https://i.imgur.com/RSzOiXD.jpeg" class="chi"/><span class="rh">RADIO ZET</span></span>
+    <span class="rli" onclick="loadIframeStream('https://www.rmfon.pl/play,6', 'RMF MAXX')"><img src="https://i.imgur.com/S8QsCd4.png" class="chi"/><span class="rh">RMF MAXX</span></span>
+    <span class="rli" onclick="loadIframeStream('https://www.rmfon.pl/play,1', 'RMF ROCK')"><img src="https://i.imgur.com/S8QsCd4.png" class="chi"/><span class="rh">RMF ROCK</span></span>
+    <span class="rli" onclick="loadIframeStream('https://www.rmfon.pl/play,7', 'RMF CLASSIC')"><img src="https://i.imgur.com/S8QsCd4.png" class="chi"/><span class="rh">RMF CLASSIC</span></span>
+  </div>
+  <div id="stream">
+    Wciśnij dowolny kanał na liście po lewej stronie ekranu, aby rozpocząć oglądanie telewizji.
+  </div>
+</div>
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<script>
+  function loadStream(url, channelName) {
+            const videoWrapper = document.getElementById('stream');
+            videoWrapper.innerHTML = '<video id="videoPlayer" class="video-js vjs-default-skin" controls autoplay preload="auto"></video>';
+            const video = document.getElementById('videoPlayer');
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function () {
+                    video.play();
+                });
+            }
+
+            videojs(video);
+        }
+
+        function loadRadio(url, radioName) {
+    const streamWrapper = document.getElementById('stream');
+    streamWrapper.innerHTML = `
+        <audio id="audioPlayer" controls autoplay preload="auto"></audio>
+        <div>${radioName}</div>
+    `;
+    const audio = document.getElementById('audioPlayer');
+
+    if (Hls.isSupported() && url.endsWith('.m3u8')) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(audio);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            audio.play();
+        });
+    } else {
+        audio.src = url;
+        audio.addEventListener('loadedmetadata', function () {
+            audio.play();
+        });
+    }
+}
+
+        function loadMpdStream(url) {
+    const videoWrapper = document.getElementById('stream');
+    videoWrapper.innerHTML = '<video id="dashPlayer" class="video-js vjs-default-skin" controls autoplay preload="auto" style="width: 100%; height: 100%;"></video>';
+    const video = document.getElementById('dashPlayer');
+
+    const player = videojs(video);
+    player.dashjsOptions = { debug: { logLevel: dashjs.Debug.LOG_LEVEL_NONE } };
+    
+    const dashSource = {
+        src: url,
+        type: 'application/dash+xml'
+    };
+
+    player.src(dashSource);
+    player.ready(() => {
+        player.play();
+    });
+}
+
+
+        function loadYouTubeStream(videoId, channelName) {
+            const videoWrapper = document.getElementById('stream');
+            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/${videoId}?autoplay=1?mute=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        }
+
+        function loadYouTubeId(videoId, channelName) {
+            const videoWrapper = document.getElementById('stream');
+            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/live_stream?channel=${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        }
+
+        function loadIframeStream(url, channelName) {
+            const videoWrapper = document.getElementById('stream');
+            videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="0"></iframe>`;
+        }
+
+        function loadRadio(url, radioName) {
+    const streamWrapper = document.getElementById('stream');
+    streamWrapper.innerHTML = `
+        <audio id="audioPlayer" controls autoplay preload="auto"></audio>
+        <div>${radioName}</div>
+    `;
+    const audio = document.getElementById('audioPlayer');
+
+    if (Hls.isSupported() && url.endsWith('.m3u8')) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(audio);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            audio.play();
+        });
+    } else {
+        audio.src = url;
+        audio.addEventListener('loadedmetadata', function () {
+            audio.play();
+        });
+    }
+}
+
+        function toggleTVP3() {
+            const tvp3 = document.getElementById("tvp3Channels");
+            tvp3.style.display = tvp3.style.display === "none" ? "block" : "none";
+        }
+
+function toggleCanal() {
+            var canal = document.getElementById("CanalChannels");
+            if (canal.style.display === "none") {
+                canal.style.display = "block";
+            } else {
+                canal.style.display = "none";
+            }
+}
+
+</script>
+
+ <style>
         body {
-            background-color: black;
-            font-family: Arial, sans-serif;
-            margin: 50px;
-            text-align: center;
+            margin: 0;
+            background: black;
+            font-family: "DM Sans", sans-serif;
+            overflow: hidden;
+            display: flex;
+            width: 100vw;
+            height: 100vh;
         }
-        button {
-            padding: 10px;
+        #content {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
+        #stream {
+            flex-grow: 1;
+            margin: 16px;
+            background: #131313;
+            padding: 16px;
+            border-radius: 32px;
+            color: white;
+            font-size: 18px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+}
+        #channels, #radios {
+            position: relative;
+            margin: 16px;
+            width: 300px;
+            height: calc(100% - 32px);
+            background: #131313;
+            padding: 16px;
+            border-radius: 32px;
+            overflow-y: scroll;
+        }
+        #channels {
+            order: -1; /* Move channels to the left */
+        }
+        #channels::-webkit-scrollbar-track, #radios::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            background-color: none;
+        }
+        #channels::-webkit-scrollbar, #radios::-webkit-scrollbar {
+            width: 0px;
+            background-color: none;
+        }
+        #channels::-webkit-scrollbar-thumb, #radios::-webkit-scrollbar-thumb {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: white;
+        }
+        .chi {
+            height: 64px;
+            width: 64px;
+            border-radius: 28px 0 0 28px;
+        }
+        .chl, .rli {
+            padding: 0;
+            border: 4px solid;
+            border-color: #191919;
+            background: #242424;
+            color: white;
+            display: flex;
+            align-items: center;
+            width: calc(100% - 16px);
+            height: 64px;
+            border-radius: 32px;
+            transition: 0.3s;
             cursor: pointer;
-            background-color: #4CAF50;
+            margin: 8px 0;
+        }
+        .chl:hover, .rli:hover {
+            background: #FFFFFF;
             color: black;
-            border: none;
-            border-radius: 5px;
+            box-shadow: white 0 0 16px;
+            border-color: #EEEEEE;
+        }
+        .ch, .rh {
+            font-size: 28px;
+            line-height: 1;
+            margin-left: 10px;
+        }
+        #youtubePlayer, #videoPlayer {
+            border-radius: 32px;
+            width: 100%;
+            height: 100%;
+        }
+        #tvp3Channels {
+            display: none;
+            padding-left: 20px;
+        }
+        #tvp3Channels span.chl {
+            display: block;  /* Ensures each channel appears on a new line within the dropdown */
+            margin-top: 16px; /* Spacing between channel links */
+        }
+        #CanalChannels span.chl {
+            display: block;  /* Ensures each channel appears on a new line within the dropdown */
+            margin-top: 5px; /* Spacing between channel links */
         }
     </style>
-</head>
-<body>
-    
-    <a href="https://www.youtube.com/channel/UC2JeWkSsV6T_uwDcNXZCb2A"><button class="btn">Archiwa TV</button></a>
-    <a href="https://irylek.github.io/tv"><button class="btn">Obejrzyj Telewizje</button></a>
-</body>
-</html>
