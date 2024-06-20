@@ -190,6 +190,24 @@ function toggleCanal() {
             }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+            function handleError(event) {
+                alert("Niestety niektóre streamy wymagają aby AdBlock był wyłączony. Proszę o wyłączenie AdBlocka.");
+            }
+
+            // List of elements to check
+            const elements = document.querySelectorAll('video, iframe');
+
+            elements.forEach(element => {
+                element.onerror = handleError;
+            });
+
+            // For video streams, handle cases where the video fails to play
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.addEventListener('error', handleError, true);
+            });
+        });
 </script>
 
  <style>
