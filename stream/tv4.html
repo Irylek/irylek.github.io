@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV4</title>
+    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.1.0/videojs-contrib-quality-levels.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .vjs-custom-controls .vjs-control-bar {
+            background: rgba(0, 0, 0, 0.3); /* Transparent background */
+            height: 80px; /* Increased height for larger controls */
+            display: flex;
+            justify-content: center; /* Center controls */
+            align-items: center; /* Center controls */
+        }
+        .vjs-custom-controls .vjs-quality-control {
+            font-size: 25px; /* Increased size */
+            color: white;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .vjs-custom-controls .vjs-volume-panel,
+        .vjs-custom-controls .vjs-fullscreen-control,
+        .vjs-custom-controls .vjs-play-control {
+            width: 85px;
+            height: 85px;
+            display: inline-block;
+            font-size: 28px;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+        .vjs-custom-controls .vjs-volume-panel {
+            display: flex;
+            align-items: center;
+            order: 1; /* Order to center */
+        }
+        .vjs-custom-controls .vjs-fullscreen-control {
+            order: 3; /* Order to right */
+        }
+        .vjs-custom-controls .vjs-picture-in-picture-control,
+        .vjs-custom-controls .vjs-current-time,
+        .vjs-custom-controls .vjs-duration,
+        .vjs-custom-controls .vjs-live-display,
+        .vjs-custom-controls .vjs-time-divider {
+            display: none;
+        }
+
+        /* Custom Loading Indicator */
+        .custom-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            display: none;
+        }
+        .custom-loading .spinner {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            border-top-color: #ffffff;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .vjs-live-indicator {
+            display: flex;
+            align-items: center;
+            margin-left: 3px; /* Adjust margins as needed */
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background-color: red; /* Red dot color */
+            border-radius: 50%; /* Rounded dot effect */
+            margin-right: 7px; /* Distance between dot and text */
+        }
+
+        .live-label {
+            font-size: 17px; /* Live text size */
+            font-weight: bold; /* Text thickness */
+        }
+
+    </style>
+</head>
+<body>
+    <div id="loading-spinner" class="custom-loading">
+        <div class="spinner"></div>
+    </div>
+
+    <video id="my-video" class="video-js vjs-default-skin vjs-custom-controls" muted autoplay controls preload="auto">
+        <source src="https://live-ipla-e1-82.pluscdn.pl/t3/24180/0/dash_rel_mp/63212030/live.mpd" type="application/dash+xml">
+    </video>
+
+    <script src="https://vjs.zencdn.net/7.11.4/video.js"></script>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.0.15/videojs-contrib-quality-levels.min.js"></script>
+    <script src="https://unpkg.com/jb-videojs-hls-quality-selector"></script>
+    <script>
+        var player = videojs('my-video');
+     
+        // Show loading indicator
+        player.on('waiting', function() {
+            document.getElementById('loading-spinner').style.display = 'block';
+        });
+
+        // Hide loading indicator when playback resumes
+        player.on('playing', function() {
+            document.getElementById('loading-spinner').style.display = 'none';
+        });
+
+        // Handle quality levels if available
+        if (window.VjsQualityPickerPlugin) {
+            player.hlsQualitySelector();
+        }
+
+        // Custom live indicator
+        player.ready(function() {
+            var liveBadge = document.createElement('div');
+            liveBadge.className = 'vjs-live-indicator';
+            var dot = document.createElement('div');
+            dot.className = 'live-dot';
+            var liveLabel = document.createElement('div');
+            liveLabel.className = 'live-label';
+            liveLabel.innerText = 'LIVE';
+            liveBadge.appendChild(dot);
+            liveBadge.appendChild(liveLabel);
+            player.controlBar.el().appendChild(liveBadge);
+        });
+
+    </script>
+</body>
+</html>
