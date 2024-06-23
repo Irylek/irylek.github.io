@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4FUN TV</title>
+    <title>Polsat</title>
     <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.1.0/videojs-contrib-quality-levels.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body, html {
             margin: 0;
@@ -105,9 +106,7 @@
         <div class="spinner"></div>
     </div>
 
-    <video id="my-video" class="video-js vjs-default-skin vjs-custom-controls" autoplay muted controls preload="auto">
-        <source src="http://cdnx1.plusx.tv:8880/203/mono.m3u8?token=0e318668ba9b1d41dd3333" type="application/x-mpegURL">
-    </video>
+    <video id="my-video" class="video-js vjs-default-skin vjs-custom-controls" autoplay muted controls preload="auto"></video>
 
     <script src="https://vjs.zencdn.net/7.11.4/video.js"></script>
     <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
@@ -115,7 +114,22 @@
     <script src="https://unpkg.com/jb-videojs-hls-quality-selector"></script>
     <script>
         var player = videojs('my-video');
-     
+
+        // HLS configuration
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource('http://cdnx1.plusx.tv:8880/203/mono.m3u8?token=0e318668ba9b1d41dd3333');
+            hls.attachMedia(player.tech_.el_);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                player.play();
+            });
+        } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+            player.src({
+                src: 'http://cdnx1.plusx.tv:8880/203/mono.m3u8?token=0e318668ba9b1d41dd3333',
+                type: 'application/x-mpegURL'
+            });
+        }
+
         // Show loading indicator
         player.on('waiting', function() {
             document.getElementById('loading-spinner').style.display = 'block';
