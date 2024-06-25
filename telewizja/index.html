@@ -63,6 +63,10 @@
     <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-565.php', 'TVN HD')"><img src="https://i.imgur.com/QfYVVvj.png" class="chi "/><span class="ch">TVN</span></span>
     <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-444.php', 'TVN24 HD')"><img src="https://i.imgur.com/ABy2AYI.png" class="chi "/><span class="ch">TVN24</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/stream/tv4.html', 'TV4')"><img src="https://i.imgur.com/YGilUcx.png" class="chi "/><span class="ch">TV4</span></span>
+              <span class="chl" onclick="toggleEuro()"><img src="https://i.imgur.com/jSt9eAq.jpeg" class="chi"/><span class="ch">Cienmax</span></span>
+        <div id="EuroChannels" style="display: none; padding-left: 20px;">
+            <span class="chl" onclick="loadStream('https://irylek.github.io/stream/cinemax1.html', 'Cinemax 1')"><img src="https://i.imgur.com/jSt9eAq.jpeg" class="chi "/><span class="ch">Cinemax 1</span></span>
+            <span class="chl" onclick="loadStream('https://irylek.github.io/stream/cinemax2.html', 'Cinemax 2')"><img src="https://i.imgur.com/jSt9eAq.jpeg" class="chi "/><span class="ch">Cinemax 2</span></span></div>
     <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-569.php', 'HBO HD')"><img src="https://i.imgur.com/C4RaflM.jpeg" class="chi "/><span class="ch">HBO</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/stream/4funtv.html', '4FUN TV')"><img src="https://i.imgur.com/GbAg3W0.jpeg" class="chi "/><span class="ch">4FUN TV</span></span>
     <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-563.php', 'MOTOWIZJA')"><img src="https://i.imgur.com/bOl9APo.png" class="chi "/><span class="ch">Motowizja</span></span>
@@ -149,6 +153,15 @@ function toggleEuro() {
                 euro.style.display = "block";
             } else {
                 euro.style.display = "none";
+            }
+}
+
+function toggleCinemax() {
+            var euro = document.getElementById("CinemaxChannels");
+            if (cinemax.style.display === "none") {
+                cinemax.style.display = "block";
+            } else {
+                cinemax.style.display = "none";
             }
 }
 
