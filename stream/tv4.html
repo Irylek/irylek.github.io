@@ -1,150 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV4</title>
-    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.1.0/videojs-contrib-quality-levels.css" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        .video-js {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        .vjs-custom-controls .vjs-control-bar {
-            background: rgba(0, 0, 0, 0.3); /* Transparent background */
-            height: 80px; /* Increased height for larger controls */
-            display: flex;
-            justify-content: center; /* Center controls */
-            align-items: center; /* Center controls */
-        }
-        .vjs-custom-controls .vjs-quality-control {
-            font-size: 25px; /* Increased size */
-            color: white;
-            margin-right: 15px;
-            cursor: pointer;
-        }
-        .vjs-custom-controls .vjs-volume-panel,
-        .vjs-custom-controls .vjs-fullscreen-control,
-        .vjs-custom-controls .vjs-play-control {
-            width: 85px;
-            height: 85px;
-            display: inline-block;
-            font-size: 28px;
-            color: #fff;
-            -webkit-font-smoothing: antialiased;
-        }
-        .vjs-custom-controls .vjs-volume-panel {
-            display: flex;
-            align-items: center;
-            order: 1; /* Order to center */
-        }
-        .vjs-custom-controls .vjs-fullscreen-control {
-            order: 3; /* Order to right */
-        }
-        .vjs-custom-controls .vjs-picture-in-picture-control,
-        .vjs-custom-controls .vjs-current-time,
-        .vjs-custom-controls .vjs-duration,
-        .vjs-custom-controls .vjs-live-display,
-        .vjs-custom-controls .vjs-time-divider {
-            display: none;
-        }
-
-        /* Custom Loading Indicator */
-        .custom-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            display: none;
-        }
-        .custom-loading .spinner {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.7);
-            border-top-color: #ffffff;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .vjs-live-indicator {
-            display: flex;
-            align-items: center;
-            margin-left: 3px; /* Adjust margins as needed */
-        }
-
-        .live-dot {
-            width: 12px;
-            height: 12px;
-            background-color: red; /* Red dot color */
-            border-radius: 50%; /* Rounded dot effect */
-            margin-right: 7px; /* Distance between dot and text */
-        }
-
-        .live-label {
-            font-size: 17px; /* Live text size */
-            font-weight: bold; /* Text thickness */
-        }
-
-    </style>
-</head>
-<body>
-    <div id="loading-spinner" class="custom-loading">
-        <div class="spinner"></div>
+<html>
+  <head>
+    <!-- Shaka Player UI compiled library: -->
+    <script src="dist/shaka-player.ui.js"></script>
+    <!-- Shaka Player UI compiled library default CSS: -->
+    <link rel="stylesheet" type="text/css" href="dist/controls.css">
+    <!-- Chromecast SDK (if you want Chromecast support for your app): -->
+    <script defer src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+    <!-- Your application source: -->
+    <script src="myapp.js"></script>
+  </head>
+  <body>
+    <!-- The data-shaka-player-container tag will make the UI library place the controls in this div.
+         The data-shaka-player-cast-receiver-id tag allows you to provide a Cast Application ID that
+           the cast button will cast to; the value provided here is the sample cast receiver. -->
+    <div data-shaka-player-container style="max-width:40em"
+         data-shaka-player-cast-receiver-id="07AEE832">
+       <!-- The data-shaka-player tag will make the UI library use this video element.
+            If no video is provided, the UI will automatically make one inside the container div. -->
+      <video autoplay data-shaka-player id="video" style="width:100%;height:100%"></video>
     </div>
-
-    <video id="my-video" class="video-js vjs-default-skin vjs-custom-controls" muted autoplay controls preload="auto">
-        <source src="https://live-ipla-e1-82.pluscdn.pl/t3/24180/0/dash_rel_mp/63212030/live.mpd" type="application/dash+xml">
-    </video>
-
-    <script src="https://vjs.zencdn.net/7.11.4/video.js"></script>
-    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.0.15/videojs-contrib-quality-levels.min.js"></script>
-    <script src="https://unpkg.com/jb-videojs-hls-quality-selector"></script>
-    <script>
-        var player = videojs('my-video');
-     
-        // Show loading indicator
-        player.on('waiting', function() {
-            document.getElementById('loading-spinner').style.display = 'block';
-        });
-
-        // Hide loading indicator when playback resumes
-        player.on('playing', function() {
-            document.getElementById('loading-spinner').style.display = 'none';
-        });
-
-        // Handle quality levels if available
-        if (window.VjsQualityPickerPlugin) {
-            player.hlsQualitySelector();
-        }
-
-        // Custom live indicator
-        player.ready(function() {
-            var liveBadge = document.createElement('div');
-            liveBadge.className = 'vjs-live-indicator';
-            var dot = document.createElement('div');
-            dot.className = 'live-dot';
-            var liveLabel = document.createElement('div');
-            liveLabel.className = 'live-label';
-            liveLabel.innerText = 'LIVE';
-            liveBadge.appendChild(dot);
-            liveBadge.appendChild(liveLabel);
-            player.controlBar.el().appendChild(liveBadge);
-        });
-
-    </script>
-</body>
+  </body>
 </html>
+<script>
+// myapp.js
+
+const manifestUri =
+    'https://live-ipla-e1-82.pluscdn.pl/t3/24180/0/dash_rel_mp/63212030/live.mpd" type="application/dash+xml';
+
+async function init() {
+  // When using the UI, the player is made automatically by the UI object.
+  const video = document.getElementById('video');
+  const ui = video['ui'];
+  const controls = ui.getControls();
+  const player = controls.getPlayer();
+
+  // Attach player and UI to the window to make it easy to access in the JS console.
+  window.player = player;
+  window.ui = ui;
+
+  // Listen for error events.
+  player.addEventListener('error', onPlayerErrorEvent);
+  controls.addEventListener('error', onUIErrorEvent);
+
+  // Try to load a manifest.
+  // This is an asynchronous process.
+  try {
+    await player.load(manifestUri);
+    // This runs if the asynchronous load is successful.
+    console.log('The video has now been loaded!');
+  } catch (error) {
+    onPlayerError(error);
+  }
+}
+
+function onPlayerErrorEvent(errorEvent) {
+  // Extract the shaka.util.Error object from the event.
+  onPlayerError(event.detail);
+}
+
+function onPlayerError(error) {
+  // Handle player error
+  console.error('Error code', error.code, 'object', error);
+}
+
+function onUIErrorEvent(errorEvent) {
+  // Extract the shaka.util.Error object from the event.
+  onPlayerError(event.detail);
+}
+
+function initFailed(errorEvent) {
+  // Handle the failure to load; errorEvent.detail.reasonCode has a
+  // shaka.ui.FailReasonCode describing why.
+  console.error('Unable to load the UI library!');
+}
+
+// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
+document.addEventListener('shaka-ui-loaded', init);
+// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
+// to load (e.g. due to lack of browser support).
+document.addEventListener('shaka-ui-load-failed', initFailed);
+</script>
