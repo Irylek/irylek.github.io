@@ -53,17 +53,17 @@
 <script>
         function loadYouTubeStream(videoId, channelName) {
             const videoWrapper = document.getElementById('stream');
-            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/${videoId}?autoplay=1?mute=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
+            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
         }
 
         function loadYouTubeId(videoId, channelName) {
             const videoWrapper = document.getElementById('stream');
-            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/live_stream?channel=${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
+            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/live_stream?channel=${videoId}&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
         }
 
         function loadStream(url, channelName) {
             const videoWrapper = document.getElementById('stream');
-            videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="no" scrolling="no" allowtransparency="true"></>`;
+            videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="no" scrolling="yes" allowtransparency="true"></>`;
         }
 
         function toggleTVP3() {
