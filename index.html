@@ -24,7 +24,7 @@
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnews.html', 'POLSAT NEWS HD')"><img src="https://i.imgur.com/yzsNl7C.jpeg" class="chi "/><span class="ch">Polsat News</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnewspolityka.html', 'POLSAT NEWS POLITYKA FHD')"><img src="https://i.imgur.com/smdArNO.png" class="chi "/><span class="ch">Polsat News Polityka</span></span>
     <span class="chl" onclick="loadStream('https://polonia.tvp.pl/44562671/tvp-polonia-stream', 'TVP Polonia')"><img src="https://i.imgur.com/j2k77Lb.png" class="chi "/><span class="ch">TVP Polonia</span></span>
-    <span class="chl" onclick="loadStream('https://tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/QISN5aV.jpeg" class="chi "/><span class="ch">TVP Info</span></span>
+    <span class="chl" onclick="loadTVPMethodStream('https://tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/QISN5aV.jpeg" class="chi "/><span class="ch">TVP Info</span></span>
     <span class="chl" onclick="loadYouTubeStream('dzntyCTgJMQ', 'TV REPUBLIKA')"><img src="https://i.imgur.com/jXv6xkc.jpeg" class="chi "/><span class="ch">TV Republika</span></span>
     <span class="chl" onclick="loadYouTubeId('UCPiu4CZlknkTworskK79CPg', 'wPolsce.PL')"><img src="https://i.imgur.com/aQ9Zc9K.png" class="chi "/><span class="ch">wPolsce.PL</span></span>
     <span class="chl" onclick="loadStream('https://embed.megogo.net/ev3/player?id=20563666&lang=pl', 'MUSIC BOX HD')"><img src="https://i.imgur.com/o9WzkPC.png" class="chi "/><span class="ch">Music Box</span></span>
@@ -64,6 +64,10 @@
         function loadStream(url, channelName) {
             const videoWrapper = document.getElementById('stream');
             videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="0"></>`;
+        }
+            function loadTVPMethodStream(url, channelName) {
+            const videoWrapper = document.getElementById('stream');
+            videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="0"> framespacing="0" frameborder="no" scrolling="no" width="980" height="720" allowtransparency="true" __idm_id__="6152193</>`;
         }
 
         function toggleTVP3() {
