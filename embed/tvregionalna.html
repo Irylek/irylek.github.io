@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #video-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            overflow: hidden;
+            background-color: #2b2b2b;
+        }
+
+        #player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr-chromecast-plugin@latest/dist/clappr-chromecast-plugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr-pip-plugin@latest/dist/clappr-pip-plugin.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/clappr/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
+</head>
+<body>
+    <div id="video-container">
+        <div id="player"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var player = new Clappr.Player({
+                source: 'https://tvreg.klemit.net/regionalna/stream/index.m3u8',
+                plugins: [LevelSelector, ChromecastPlugin, ClapprPIPPlugin], 
+                chromecast: {
+                    appId: '9DFB77C0',
+                    contentType: 'application/x-mpegURL',
+                    media: {
+                        type: ChromecastPlugin.Movie,
+                        title: 'Live Stream Example',
+                        subtitle: 'Example subtitle for the live stream'
+                    }
+                },
+                width: '100%',
+                height: '100%',
+                autoPlay: true,
+                language: 'pl-PL',
+                strings: {
+                    'pl-PL': {
+                        'live': 'LIVE',
+                        'back_to_live': 'NOT LIVE'
+                    }
+                },
+                levelSelectorConfig: {
+                    title: 'Jakość',
+                    labels: {},
+                    labelCallback: function(playbackLevel, customLabel) {
+                        var height = playbackLevel ? playbackLevel.video.height : 'auto';
+                        return customLabel + ' ' + height + 'p';
+                    }
+                }
+            });
+
+            player.attachTo(document.getElementById('player'));
+
+            player.on(Clappr.Events.PLAYER_READY, function() {
+                var levelSelector = player.getPlugin('level_selector');
+                if (levelSelector) {
+                    levelSelector.on('levelsavailable', function(levels) {
+                        levels.forEach(function(level, index) {
+                            var height = level.video ? level.video.height : 'auto';
+                            var label = height + 'p';
+                            levelSelector.options.labels[index] = label;
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
