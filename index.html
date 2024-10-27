@@ -17,34 +17,64 @@
 
 <div id="content">
     <div id="channels">
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvp1.html', 'TVP1')"><img src="https://i.imgur.com/upAXwAe.png" class="chi "/><span class="ch">TVP1 HD</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvp2.html', 'TVP2')"><img src="https://i.imgur.com/sqtvhHu.png" class="chi "/><span class="ch">TVP2 HD</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsat.html', 'POLSAT')"><img src="https://i.imgur.com/ShwQG5z.jpeg" class="chi "/><span class="ch">Polsat</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvn.html', 'TVN SD')"><img src="https://i.imgur.com/PEYUL92.png" class="chi "/><span class="ch">TVN</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tv4.html', 'TV4')"><img src="https://i.imgur.com/YGilUcx.png" class="chi "/><span class="ch">TV4</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/4funtv.html', '4FUN TV')"><img src="https://i.imgur.com/GbAg3W0.jpeg" class="chi "/><span class="ch">4FUN TV</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnews.html', 'POLSAT NEWS HD')"><img src="https://i.imgur.com/yzsNl7C.jpeg" class="chi "/><span class="ch">Polsat News</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnewspolityka.html', 'POLSAT NEWS POLITYKA FHD')"><img src="https://i.imgur.com/6NDBMs8.png" class="chi "/><span class="ch">Polsat News Polityka</span></span>
+    <span class="chl" onclick="toggleOgolnoDostepne()"><img src="https://i.imgur.com/m55DHeH.jpeg" class="chi"/><span class="ch">Ogólno tematyczne</span></span>
+    <div id="OgolneDostepneChannels" style="display: none; padding-left: 20px;">
+        <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvp1.html', 'TVP1')"><img src="https://i.imgur.com/upAXwAe.png" class="chi "/><span class="ch">TVP1 HD</span></span>
+        <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvp2.html', 'TVP2')"><img src="https://i.imgur.com/sqtvhHu.png" class="chi "/><span class="ch">TVP2 HD</span></span>
+        <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsat.html', 'POLSAT')"><img src="https://i.imgur.com/ShwQG5z.jpeg" class="chi "/><span class="ch">Polsat</span></span>
+        <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvn.html', 'TVN SD')"><img src="https://i.imgur.com/PEYUL92.png" class="chi "/><span class="ch">TVN</span></span>
+        <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tv4.html', 'TV4')"><img src="https://i.imgur.com/YGilUcx.png" class="chi "/><span class="ch">TV4</span></span></div>
+    <span class="chl" onclick="toggleNews()"><img src="https://i.imgur.com/tSyF2Hi.png" class="chi"/><span class="ch">News</span></span>
+    <div id="NewsChannels" style="display: none; padding-left: 20px;">
+      <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnews.html', 'POLSAT NEWS HD')"><img src="https://i.imgur.com/yzsNl7C.jpeg" class="chi "/><span class="ch">Polsat News</span></span>
+      <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnewspolityka.html', 'POLSAT NEWS POLITYKA FHD')"><img src="https://i.imgur.com/6NDBMs8.png" class="chi "/><span class="ch">Polsat News Polityka</span></span>
+      <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-444.php', 'TVN24 HD')"><img src="https://i.imgur.com/ABy2AYI.png" class="chi "/><span class="ch">TVN24</span></span>
+      <span class="chl" onclick="loadStream('https://tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/QISN5aV.jpeg" class="chi "/><span class="ch">TVP Info</span></span>
     <span class="chl" onclick="loadStream('https://www.youtube.com/embed/dzntyCTgJMQ?autoplay=1', 'TV REPUBLIKA')"><img src="https://i.imgur.com/jXv6xkc.jpeg" class="chi "/><span class="ch">TV Republika</span></span>
     <span class="chl" onclick="loadStream('https://www.youtube.com/embed/c1sTYHXqgH8?autoplay=1', 'TV REPUBLIKA PLUS')"><img src="https://i.imgur.com/2Ed3B8m.jpeg" class="chi "/><span class="ch">TV Republika Plus</span></span>
-    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?channel=UCPiu4CZlknkTworskK79CPg&autoplay=1', 'wPolsce.PL')"><img src="https://i.imgur.com/ayBqh7C.png" class="chi "/><span class="ch">wPolsce.PL</span></span>
-    <span class="chl" onclick="loadStream('https://tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/gMr7DXF.png" class="chi "/><span class="ch">TVP Info</span></span>
-    <span class="chl" onclick="loadStream('https://polonia.tvp.pl/44562671/tvp-polonia-stream', 'TVP Polonia')"><img src="https://i.imgur.com/nol9fZq.png" class="chi "/><span class="ch">TVP Polonia</span></span>
-    <span class="chl" onclick="loadStream('https://strims.in/tv/tvtoya.php', 'TV TOYA')"><img src="https://i.imgur.com/yQHm0mf.png" class="chi "/><span class="ch">TV Toya</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?channel=UCPiu4CZlknkTworskK79CPg&autoplay=1', 'wPolsce.PL')"><img src="https://i.imgur.com/ayBqh7C.png" class="chi "/><span class="ch">wPolsce.PL</span></span></div>
+      <span class="chl" onclick="toggleSport()"><img src="https://i.imgur.com/NpRDvbv.jpeg" class="chi"/><span class="ch">Sport</span></span>
+      <div id="SportChannels" style="display: none; padding-left: 20px;">
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-128.php', 'TVP Sport')"><img src="https://i.imgur.com/cLFzKZK.png" class="chi "/><span class="ch">TVP Sport</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-47.php', 'POLSAT SPORT 1 HD')"><img src="https://i.imgur.com/Z6QpkJK.jpeg" class="chi "/><span class="ch">Polsat Sport 1</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-50.php', 'POLSAT SPORT 2 HD')"><img src="https://i.imgur.com/Z6QpkJK.jpeg" class="chi "/><span class="ch">Polsat Sport 2</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-129.php', 'POLSAT SPORT 3 HD')"><img src="https://i.imgur.com/Z6QpkJK.jpeg" class="chi "/><span class="ch">Polsat Sport 3</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.sx/embed/stream-71.php', 'ELEVEN SPORTS 1')"><img src="https://i.imgur.com/pTVoupp.jpeg" class="chi "/><span class="ch">Eleven Sport 1</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.sx/embed/stream-72.php', 'ELEVEN SPORTS 2')"><img src="https://i.imgur.com/pTVoupp.jpeg" class="chi "/><span class="ch">Eleven Sport 2</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.sx/embed/stream-428.php', 'ELEVEN SPORTS 3')"><img src="https://i.imgur.com/pTVoupp.jpeg" class="chi "/><span class="ch">Eleven Sport 3</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.sx/embed/stream-57.php', 'EuroSport 1')"><img src="https://i.imgur.com/trCCUqX.jpeg" class="chi "/><span class="ch">EuroSport 1</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.sx/embed/stream-58.php', 'EuroSport 2')"><img src="https://i.imgur.com/trCCUqX.jpeg" class="chi "/><span class="ch">EuroSport 2</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-48.php', 'CANAL+ SPORT 1')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">C+ Sport</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-73.php', 'CANAL+ SPORT 2')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">C+ Sport 2</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-75.php', 'CANAL+ SPORT 5')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">C+ Sport 5</span></span>
+          <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-563.php', 'MOTOWIZJA')"><img src="https://i.imgur.com/bOl9APo.png" class="chi "/><span class="ch">Motowizja</span></span></div>
+    <span class="chl" onclick="toggleFilmy()"><img src="https://i.imgur.com/CUNFeZi.png" class="chi"/><span class="ch">Filmy</span></span>
+    <div id="FilmyChannels" style="display: none; padding-left: 20px;">
+    <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-569.php', 'HBO HD')"><img src="https://i.imgur.com/C4RaflM.jpeg" class="chi "/><span class="ch">HBO</span></span>
+    <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-564.php', 'POLSAT FILM HD')"><img src="https://i.imgur.com/JIT8j9Y.png" class="chi "/><span class="ch">Polsat Film</span></span>
+    <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-568.php', 'FILMBOX PREMIUM HD POLAND')"><img src="https://i.imgur.com/8yPk6jy.png" class="chi "/><span class="ch">FilmBox Premium</span></span>
+    <span class="chl" onclick="loadStream('https://dlhd.so/embed/stream-566.php', 'CANAL+ PREMIUM')"><img src="https://i.imgur.com/HscPBkD.jpeg" class="chi "/><span class="ch">C+ Premium</span></span></div>
+    <span class="chl" onclick="toggleReligia()"><img src="https://i.imgur.com/tM08PVc.jpeg" class="chi"/><span class="ch">Religijne</span></span>
+    <div id="ReligiaChannels" style="display: none; padding-left: 20px;">
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/ewtnpolska.html', 'EWTN Polska')"><img src="https://i.imgur.com/g8G7szz.png" class="chi "/><span class="ch">EWTN Polska</span></span>
-    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvtrwam.html', 'TV TRWAM')"><img src="https://i.imgur.com/DC58wDY.jpeg" class="chi "/><span class="ch">TV Trwam</span></span>
+    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvtrwam.html', 'TV TRWAM')"><img src="https://i.imgur.com/DC58wDY.jpeg" class="chi "/><span class="ch">TV Trwam</span></span></div>
+    <span class="chl" onclick="toggleInne()"><img src="https://i.imgur.com/ZqEclsd.png" class="chi"/><span class="ch">Inne kanały</span></span>
+    <div id="InneChannels" style="display: none; padding-left: 20px;">
+    <span class="chl" onclick="loadStream('https://irylek.github.io/embed/4funtv.html', '4FUN TV')"><img src="https://i.imgur.com/GbAg3W0.jpeg" class="chi "/><span class="ch">4FUN TV</span></span>
     <span class="chl" onclick="loadStream('https://wilno.tvp.pl/65446663/ogladaj-online', 'TVP Wilno')"><img src="https://i.imgur.com/64yr9gM.png" class="chi"/><span class="ch">TVP Wilno</span></span>
-    <span class="chl" onclick="loadStream('https://krainaabc.tvp.pl/tv-online', 'TVP ABC')"><img src="https://i.imgur.com/xnVQWTE.png" class="chi"/><span class="ch">TVP ABC</span></span>
+    <span class="chl" onclick="loadStream('https://krainaabc.tvp.pl/tv-online', 'TVP ABC')"><img src="https://i.imgur.com/xnVQWTE.png" class="chi"/><span class="ch">TVP ABC i TVP ABC 2</span></span>
     <span class="chl" onclick="loadStream('https://kultura2.tvp.pl', 'TVP KULTURA 2')"><img src="https://i.imgur.com/YVmOsnb.png" class="chi"/><span class="ch">TVP Kultura 2</span></span>
     <span class="chl" onclick="loadStream('https://historia.tvp.pl/52614342/kanal-historia-2', 'TVP HISTORIA 2')"><img src="https://s.tvp.pl/files/portale-v4/tvp-pl/images/tvp-historia.jpg" class="chi"/><span class="ch">TVP Historia 2</span></span>
+    <span class="chl" onclick="loadStream('https://polonia.tvp.pl/44562671/tvp-polonia-stream', 'TVP Polonia')"><img src="https://i.imgur.com/j2k77Lb.png" class="chi "/><span class="ch">TVP Polonia</span></span>
+    <span class="chl" onclick="loadStream('https://tvtoya.pl/player/live', 'TV Toya')"><img src="https://i.imgur.com/EboAP1s.jpeg" class="chi "/><span class="ch">TV Toya</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvregionalna.html', 'TV REGIONALNA')"><img src="https://i.imgur.com/hAxJfE7.jpeg" class="chi "/><span class="ch">TV Regionalna</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/sferatv.html', 'SFERA TV')"><img src="https://i.imgur.com/ZuFB3VG.png" class="chi "/><span class="ch">Sfera TV</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/dlaciebietv.html', 'dlaCiebieTV')"><img src="https://i.imgur.com/bTSCTvP.jpeg" class="chi "/><span class="ch">dlaCiebieTV</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvbiznesowa.html', 'TV Biznesowa')"><img src="https://i.imgur.com/uCO2upl.png" class="chi "/><span class="ch">TV Biznesowa</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvimperium.html', 'TV Imperium')"><img src="https://i.imgur.com/wc7xxll.jpeg" class="chi "/><span class="ch">TV Imperium</span></span>
     <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?UCdBYAZdagaQcr-Fe15ifMPQ&autoplay=1', 'TV Narew')"><img src="https://i.imgur.com/CuZiP9Z.jpeg" class="chi "/><span class="ch">TV Narew</span></span>
-    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?UC0vwjMGoZpwG_lLBuF6_ALA&autoplay=1', 'TV Olsztyn')"><img src="https://i.imgur.com/alz7EnF.jpeg" class="chi "/><span class="ch">TV Olsztyn</span></span>
-    </div>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?UC0vwjMGoZpwG_lLBuF6_ALA&autoplay=1', 'TV Olsztyn')"><img src="https://i.imgur.com/alz7EnF.jpeg" class="chi "/><span class="ch">TV Olsztyn</span></span></div>
+  </div>
 
     <div id="stream-container">
         <div id="stream">
@@ -66,6 +96,55 @@
         const videoWrapper = document.getElementById('stream');
         videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="0" scrolling="no" style="width: 100%; height: 100%; border-radius: 32px;"></iframe>`;
     }
+
+     function toggleInne() {
+            var inne = document.getElementById("InneChannels");
+            if (inne.style.display === "none") {
+                inne.style.display = "block";
+            } else {
+                inne.style.display = "none";
+            }
+        }
+function toggleOgolnoDostepne() {
+            var ogolnodostepne = document.getElementById("OgolneDostepneChannels");
+            if (ogolnodostepne.style.display === "none") {
+                ogolnodostepne.style.display = "block";
+            } else {
+                ogolnodostepne.style.display = "none";
+            }
+}
+function toggleNews() {
+            var news = document.getElementById("NewsChannels");
+            if (news.style.display === "none") {
+                news.style.display = "block";
+            } else {
+                news.style.display = "none";
+            }
+}
+function toggleSport() {
+            var sport = document.getElementById("SportChannels");
+            if (sport.style.display === "none") {
+                sport.style.display = "block";
+            } else {
+                sport.style.display = "none";
+            }
+}
+function toggleFilmy() {
+            var filmy = document.getElementById("FilmyChannels");
+            if (filmy.style.display === "none") {
+                filmy.style.display = "block";
+            } else {
+                filmy.style.display = "none";
+            }
+}
+function toggleReligia() {
+            var religia = document.getElementById("ReligiaChannels");
+            if (religia.style.display === "none") {
+                religia.style.display = "block";
+            } else {
+                religia.style.display = "none";
+            }
+}
 </script>
 
 <style>
