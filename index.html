@@ -25,9 +25,9 @@
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/4funtv.html', '4FUN TV')"><img src="https://i.imgur.com/GbAg3W0.jpeg" class="chi "/><span class="ch">4FUN TV</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnews.html', 'POLSAT NEWS HD')"><img src="https://i.imgur.com/yzsNl7C.jpeg" class="chi "/><span class="ch">Polsat News</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/polsatnewspolityka.html', 'POLSAT NEWS POLITYKA FHD')"><img src="https://i.imgur.com/6NDBMs8.png" class="chi "/><span class="ch">Polsat News Polityka</span></span>
-    <span class="chl" onclick="loadYouTubeStream('dzntyCTgJMQ', 'TV REPUBLIKA')"><img src="https://i.imgur.com/jXv6xkc.jpeg" class="chi "/><span class="ch">TV Republika</span></span>
-    <span class="chl" onclick="loadYouTubeStream('c1sTYHXqgH8', 'TV REPUBLIKA PLUS')"><img src="https://i.imgur.com/2Ed3B8m.jpeg" class="chi "/><span class="ch">TV Republika Plus</span></span>
-    <span class="chl" onclick="loadYouTubeId('UCPiu4CZlknkTworskK79CPg', 'wPolsce.PL')"><img src="https://i.imgur.com/ayBqh7C.png" class="chi "/><span class="ch">wPolsce.PL</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/dzntyCTgJMQ?autoplay=1', 'TV REPUBLIKA')"><img src="https://i.imgur.com/jXv6xkc.jpeg" class="chi "/><span class="ch">TV Republika</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/c1sTYHXqgH8?autoplay=1', 'TV REPUBLIKA PLUS')"><img src="https://i.imgur.com/2Ed3B8m.jpeg" class="chi "/><span class="ch">TV Republika Plus</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?channel=UCPiu4CZlknkTworskK79CPg&autoplay=1', 'wPolsce.PL')"><img src="https://i.imgur.com/ayBqh7C.png" class="chi "/><span class="ch">wPolsce.PL</span></span>
     <span class="chl" onclick="loadStream('https://tvp.info/ogladaj-na-zywo', 'TVP INFO')"><img src="https://i.imgur.com/gMr7DXF.png" class="chi "/><span class="ch">TVP Info</span></span>
     <span class="chl" onclick="loadStream('https://polonia.tvp.pl/44562671/tvp-polonia-stream', 'TVP Polonia')"><img src="https://i.imgur.com/nol9fZq.png" class="chi "/><span class="ch">TVP Polonia</span></span>
     <span class="chl" onclick="loadStream('https://strims.in/tv/tvtoya.php', 'TV TOYA')"><img src="https://i.imgur.com/yQHm0mf.png" class="chi "/><span class="ch">TV Toya</span></span>
@@ -42,8 +42,8 @@
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/dlaciebietv.html', 'dlaCiebieTV')"><img src="https://i.imgur.com/bTSCTvP.jpeg" class="chi "/><span class="ch">dlaCiebieTV</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvbiznesowa.html', 'TV Biznesowa')"><img src="https://i.imgur.com/uCO2upl.png" class="chi "/><span class="ch">TV Biznesowa</span></span>
     <span class="chl" onclick="loadStream('https://irylek.github.io/embed/tvimperium.html', 'TV Imperium')"><img src="https://i.imgur.com/wc7xxll.jpeg" class="chi "/><span class="ch">TV Imperium</span></span>
-    <span class="chl" onclick="loadYouTubeId('UCdBYAZdagaQcr-Fe15ifMPQ', 'TV Narew')"><img src="https://i.imgur.com/CuZiP9Z.jpeg" class="chi "/><span class="ch">TV Narew</span></span>
-    <span class="chl" onclick="loadYouTubeId('UC0vwjMGoZpwG_lLBuF6_ALA', 'TV Olsztyn')"><img src="https://i.imgur.com/alz7EnF.jpeg" class="chi "/><span class="ch">TV Olsztyn</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?UCdBYAZdagaQcr-Fe15ifMPQ&autoplay=1', 'TV Narew')"><img src="https://i.imgur.com/CuZiP9Z.jpeg" class="chi "/><span class="ch">TV Narew</span></span>
+    <span class="chl" onclick="loadStream('https://www.youtube.com/embed/live_stream?UC0vwjMGoZpwG_lLBuF6_ALA&autoplay=1', 'TV Olsztyn')"><img src="https://i.imgur.com/alz7EnF.jpeg" class="chi "/><span class="ch">TV Olsztyn</span></span>
     </div>
 
     <div id="stream-container">
@@ -66,17 +66,6 @@
         const videoWrapper = document.getElementById('stream');
         videoWrapper.innerHTML = `<iframe id="videoPlayer" src="${url}" allowfullscreen="yes" frameborder="0" scrolling="no" style="width: 100%; height: 100%; border-radius: 32px;"></iframe>`;
     }
-
-            function loadYouTubeStream(videoId, channelName) {
-            const videoWrapper = document.getElementById('stream');
-            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
-        }
-
-        function loadYouTubeId(videoId, channelName) {
-            const videoWrapper = document.getElementById('stream');
-            videoWrapper.innerHTML = `<iframe id="youtubePlayer" src="https://www.youtube.com/embed/live_stream?channel=${videoId}&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></>`;
-        }
-
 </script>
 
 <style>
