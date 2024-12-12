@@ -48,11 +48,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var player = new Clappr.Player({
-                source: 'https://cdndai.pl/tvp3warszawasd/index.m3u8',
+                source: 'https://cdndai.pl/tvp3warszawasd/manifest.mpd',
                 plugins: [LevelSelector, ChromecastPlugin, ClapprPIPPlugin], 
                 chromecast: {
                     appId: '9DFB77C0',
-                    contentType: 'application/x-mpegURL',
+                    contentType: 'application/dash+xml',
                     media: {
                         type: ChromecastPlugin.Movie,
                         title: 'Live Stream Example',
