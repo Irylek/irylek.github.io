@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            background-color: #1e1e1e;
+            color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,23 +18,23 @@
         }
 
         .container {
-            background: #ffffff;
+            background: #2b2b2b;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             width: 90%;
             max-width: 600px;
             text-align: center;
         }
 
         h1 {
-            color: #333;
+            color: #ffffff;
             font-size: 1.8rem;
             margin-bottom: 10px;
         }
 
         p {
-            color: #666;
+            color: #cccccc;
             margin-bottom: 20px;
             font-size: 1rem;
         }
@@ -43,11 +44,13 @@
             height: 100px;
             padding: 10px;
             font-size: 1rem;
-            border: 1px solid #ddd;
+            border: 1px solid #444;
             border-radius: 4px;
             margin-bottom: 10px;
             resize: none;
             box-sizing: border-box;
+            background-color: #1e1e1e;
+            color: #ffffff;
         }
 
         button {
@@ -68,12 +71,31 @@
         #output {
             margin-top: 20px;
             padding: 15px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
+            background: #333333;
+            border: 1px solid #444;
             border-radius: 4px;
-            color: #333;
+            color: #ffffff;
             font-size: 1rem;
             word-break: break-word;
+            position: relative;
+        }
+
+        #copyButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #copyButton:hover {
+            background-color: #666;
         }
     </style>
 </head>
@@ -84,7 +106,10 @@
         <textarea id="inputUrl" placeholder="Enter your manifest URL here..."></textarea>
         <br>
         <button onclick="handleConvert()">Convert</button>
-        <div id="output"></div>
+        <div id="output">
+            <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy</button>
+            <span id="outputText"></span>
+        </div>
     </div>
 
     <script>
@@ -120,8 +145,20 @@
         function handleConvert() {
             const inputUrl = document.getElementById('inputUrl').value;
             const outputDiv = document.getElementById('output');
+            const outputText = document.getElementById('outputText');
+            const copyButton = document.getElementById('copyButton');
             const result = convertAmazonManifest(inputUrl);
-            outputDiv.textContent = result;
+            outputText.textContent = result;
+            copyButton.style.display = result !== 'Invalid URL. Please check your input.' ? 'block' : 'none';
+        }
+
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputText').textContent;
+            navigator.clipboard.writeText(outputText).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy: ', err);
+            });
         }
     </script>
 </body>
