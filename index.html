@@ -1,179 +1,93 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon Manifest Converter</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #1e1e1e;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <title>Index of /</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1f1f1f;
+      font-family: 'Open Sans', sans-serif;
+      color: #ffffff;
+    }
 
-        .container {
-            background: #2b2b2b;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-        }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background-color: #2a2a2a;
+    }
 
-        h1 {
-            color: #ffffff;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
 
-        p {
-            color: #cccccc;
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
+    nav {
+      margin: 2rem auto;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #444;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            resize: none;
-            box-sizing: border-box;
-            background-color: #1e1e1e;
-            color: #ffffff;
-        }
+    nav a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #ffffff;
+      background-color: #333333;
+      padding: 1rem 1.5rem;
+      margin: 0.5rem 0;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
 
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+    nav a:hover {
+      background-color: #444444;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    nav a img {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
 
-        #output {
-            margin-top: 20px;
-            padding: 20px;
-            background: #333333;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #ffffff;
-            font-size: 1rem;
-            word-break: break-word;
-            position: relative;
-        }
-
-        #copyButton {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #444;
-            border: none;
-            color: #fff;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        #copyButton.copied {
-            background-color: #28a745;
-            color: #ffffff;
-            cursor: default;
-        }
-
-        #copyButton:hover:not(.copied) {
-            background-color: #666;
-        }
-    </style>
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #2a2a2a;
+      color: #aaaaaa;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Amazon Manifest Converter</h1>
-        <p>Tired of changing the manifest everytime you want to download something from Amazon? This tool is for you!</p>
-        <textarea id="inputUrl" placeholder="Enter your manifest here..."></textarea>
-        <br>
-        <button onclick="handleConvert()">Convert</button>
-        <div id="output">
-            <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy</button>
-            <span id="outputText"></span>
-        </div>
-    </div>
+  <header>
+    <h1>Index of /</h1>
+  </header>
 
-    <script>
-        function convertAmazonManifest(url) {
-            try {
-                const urlObject = new URL(url);
+  <nav>
+    <a href="https://irylek.github.io/tools">
+      <img
+        src="https://irylek.github.io/assets/folder.png"
+        alt="Folder"
+      />
+      tools/
+    </a>
+  </nav>
 
-                // Remove query parameters
-                urlObject.search = '';
-
-                // Remove the /dm/ segment and handle its parts
-                const pathParts = urlObject.pathname.split('/');
-                const dmIndex = pathParts.indexOf('dm');
-                if (dmIndex !== -1) {
-                    const secondPart = pathParts[dmIndex + 2] || '';
-                    if (secondPart.includes('@')) {
-                        // Remove 'dm', its first part, and second part with '@'
-                        pathParts.splice(dmIndex, 3);
-                    } else {
-                        // Remove 'dm' and its first part only
-                        pathParts.splice(dmIndex, 2);
-                    }
-                }
-                urlObject.pathname = pathParts.join('/');
-
-                return urlObject.toString();
-            } catch (error) {
-                console.error('Invalid URL:', error);
-                return 'Invalid URL. Please check your input.';
-            }
-        }
-
-        function handleConvert() {
-            const inputUrl = document.getElementById('inputUrl').value;
-            const outputDiv = document.getElementById('output');
-            const outputText = document.getElementById('outputText');
-            const copyButton = document.getElementById('copyButton');
-            const result = convertAmazonManifest(inputUrl);
-            outputText.textContent = result;
-            if (result !== 'Invalid URL. Please check your input.') {
-                copyButton.style.display = 'block';
-                copyButton.classList.remove('copied');
-                copyButton.textContent = 'Copy';
-            } else {
-                copyButton.style.display = 'none';
-            }
-        }
-
-        function copyToClipboard() {
-            const outputText = document.getElementById('outputText').textContent;
-            navigator.clipboard.writeText(outputText).then(() => {
-                const copyButton = document.getElementById('copyButton');
-                copyButton.textContent = '✅';
-                copyButton.classList.add('copied');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
-    </script>
+  <footer>
+   This site is for educational purposes only. Do not download content without consent.
+  </footer>
 </body>
 </html>
