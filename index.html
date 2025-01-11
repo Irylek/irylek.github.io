@@ -95,11 +95,18 @@
                 // Remove query parameters
                 urlObject.search = '';
 
-                // Remove the /dm/ segment and the part after it
+                // Remove the /dm/ segment and handle its parts
                 const pathParts = urlObject.pathname.split('/');
                 const dmIndex = pathParts.indexOf('dm');
                 if (dmIndex !== -1) {
-                    pathParts.splice(dmIndex, 2); // Remove 'dm' and the part after it
+                    const secondPart = pathParts[dmIndex + 2] || '';
+                    if (secondPart.includes('@')) {
+                        // Remove 'dm', its first part, and second part with '@'
+                        pathParts.splice(dmIndex, 3);
+                    } else {
+                        // Remove 'dm' and its first part only
+                        pathParts.splice(dmIndex, 2);
+                    }
                 }
                 urlObject.pathname = pathParts.join('/');
 
