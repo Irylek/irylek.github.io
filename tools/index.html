@@ -1,66 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index of /</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background-color: #222;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #444;
-        }
-        header img {
-            width: 20px;
-            height: 20px;
-        }
-        header span {
-            font-size: 16px;
-            color: #fff;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: calc(100vh - 50px); /* Odejmij wysokość nagłówka */
-        }
-        .folder-icon {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-        }
-        a {
-            color: #1e90ff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Moje Linki - Index</title>
+  <!-- Możesz tu dodać link do dowolnej czcionki z Google Fonts, np.: -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1f1f1f; /* Ciemne tło */
+      font-family: 'Open Sans', sans-serif;
+      color: #ffffff; /* Jasna czcionka */
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background-color: #2a2a2a;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    header p {
+      margin: 0.5rem 0 0;
+      font-size: 1.2rem;
+      color: #aaaaaa;
+    }
+
+    nav {
+      margin: 2rem auto;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap; /* pozwala zawijać się wierszom linków na mniejszych ekranach */
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffffff;
+      background-color: #333333;
+      padding: 1rem 1.5rem;
+      margin: 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #444444;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #2a2a2a;
+      color: #aaaaaa;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <img src="home-icon.png" alt="Home Icon">
-        <span>Index of /</span>
-    </header>
-    <div class="container">
-        <h1>Index of /</h1>
-        <p>
-            <img src="https://irylek.github.io/assets/folder.png" alt="Folder Icon" class="folder-icon">
-            <a href="tools/">tools/</a>
-        </p>
-    </div>
+  <header>
+    <h1>Moje Strony</h1>
+    <p>Wybierz podstronę z listy poniżej</p>
+  </header>
+
+  <nav>
+    <a href="strona1.html">Strona 1</a>
+    <a href="strona2.html">Strona 2</a>
+    <a href="strona3.html">Strona 3</a>
+    <a href="strona4.html">Strona 4</a>
+  </nav>
+
+  <footer>
+    &copy; 2025 Moje Linki | Projekt przykładowy
+  </footer>
 </body>
 </html>
