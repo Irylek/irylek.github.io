@@ -2,14 +2,13 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>Moje Linki - Index</title>
-  <!-- Możesz tu dodać link do dowolnej czcionki z Google Fonts, np.: -->
+  <title>Index of /</title>
+  <!-- Opcjonalnie: link do Google Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap"
     rel="stylesheet"
   />
-
   <style>
     body {
       margin: 0;
@@ -32,21 +31,17 @@
       color: #ffffff;
     }
 
-    header p {
-      margin: 0.5rem 0 0;
-      font-size: 1.2rem;
-      color: #aaaaaa;
-    }
-
     nav {
       margin: 2rem auto;
       max-width: 600px;
       display: flex;
       justify-content: space-around;
-      flex-wrap: wrap; /* pozwala zawijać się wierszom linków na mniejszych ekranach */
+      flex-wrap: wrap;
     }
 
     nav a {
+      display: flex;
+      align-items: center; /* wyrównanie ikony i tekstu w pionie */
       text-decoration: none;
       color: #ffffff;
       background-color: #333333;
@@ -58,6 +53,13 @@
 
     nav a:hover {
       background-color: #444444;
+    }
+
+    nav a img {
+      width: 20px;   /* szerokość ikony */
+      height: 20px;  /* wysokość ikony */
+      margin-right: 0.5rem;
+      vertical-align: middle;
     }
 
     footer {
@@ -73,19 +75,43 @@
 </head>
 <body>
   <header>
-    <h1>Moje Strony</h1>
-    <p>Wybierz podstronę z listy poniżej</p>
+    <h1>Index of /</h1>
+    <!-- <p>Ten element usunięto na życzenie</p> -->
   </header>
 
   <nav>
-    <a href="strona1.html">Strona 1</a>
-    <a href="strona2.html">Strona 2</a>
-    <a href="strona3.html">Strona 3</a>
-    <a href="strona4.html">Strona 4</a>
+    <a href="strona1.html">
+      <img
+        src="https://irylek.github.io/assets/folder.png"
+        alt="Folder"
+      />
+      Strona 1
+    </a>
+    <a href="strona2.html">
+      <img
+        src="https://irylek.github.io/assets/folder.png"
+        alt="Folder"
+      />
+      Strona 2
+    </a>
+    <a href="strona3.html">
+      <img
+        src="https://irylek.github.io/assets/folder.png"
+        alt="Folder"
+      />
+      Strona 3
+    </a>
+    <a href="strona4.html">
+      <img
+        src="https://irylek.github.io/assets/folder.png"
+        alt="Folder"
+      />
+      Strona 4
+    </a>
   </nav>
 
   <footer>
-    &copy; 2025 Moje Linki | Projekt przykładowy
+    &copy; 2025 Index of / | Projekt przykładowy
   </footer>
 </body>
 </html>
