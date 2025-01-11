@@ -33,10 +33,10 @@
 
     nav {
       margin: 2rem auto;
-      max-width: 600px;
+      max-width: 400px;
       display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
+      flex-direction: column; /* układ pionowy */
+      align-items: flex-start; /* linki wyrównane do lewej */
     }
 
     nav a {
@@ -46,9 +46,10 @@
       color: #ffffff;
       background-color: #333333;
       padding: 1rem 1.5rem;
-      margin: 0.5rem;
+      margin: 0.5rem 0;
       border-radius: 4px;
       transition: background-color 0.3s ease;
+      width: 100%;
     }
 
     nav a:hover {
@@ -76,7 +77,6 @@
 <body>
   <header>
     <h1>Index of /</h1>
-    <!-- <p>Ten element usunięto na życzenie</p> -->
   </header>
 
   <nav>
