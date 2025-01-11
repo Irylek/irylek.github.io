@@ -94,7 +94,13 @@
             transition: background-color 0.3s;
         }
 
-        #copyButton:hover {
+        #copyButton.copied {
+            background-color: #28a745;
+            color: #ffffff;
+            cursor: default;
+        }
+
+        #copyButton:hover:not(.copied) {
             background-color: #666;
         }
     </style>
@@ -149,15 +155,23 @@
             const copyButton = document.getElementById('copyButton');
             const result = convertAmazonManifest(inputUrl);
             outputText.textContent = result;
-            copyButton.style.display = result !== 'Invalid URL. Please check your input.' ? 'block' : 'none';
+            if (result !== 'Invalid URL. Please check your input.') {
+                copyButton.style.display = 'block';
+                copyButton.classList.remove('copied');
+                copyButton.textContent = 'Copy';
+            } else {
+                copyButton.style.display = 'none';
+            }
         }
 
         function copyToClipboard() {
             const outputText = document.getElementById('outputText').textContent;
             navigator.clipboard.writeText(outputText).then(() => {
-                alert('Copied to clipboard!');
+                const copyButton = document.getElementById('copyButton');
+                copyButton.textContent = '✔';
+                copyButton.classList.add('copied');
             }).catch(err => {
-                alert('Failed to copy: ', err);
+                console.error('Failed to copy: ', err);
             });
         }
     </script>
