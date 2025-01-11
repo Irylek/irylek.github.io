@@ -30,12 +30,14 @@
             try {
                 const urlObject = new URL(url);
 
+                // Remove query parameters
                 urlObject.search = '';
 
+                // Remove the /dm/ segment and the part after it
                 const pathParts = urlObject.pathname.split('/');
                 const dmIndex = pathParts.indexOf('dm');
-                if (dmIndex !== -1 && pathParts[dmIndex + 1]) {
-                    pathParts.splice(dmIndex + 1, 1);
+                if (dmIndex !== -1) {
+                    pathParts.splice(dmIndex, 2); // Remove 'dm' and the part after it
                 }
                 urlObject.pathname = pathParts.join('/');
 
