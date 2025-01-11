@@ -11,13 +11,30 @@
             background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #222;
+            padding: 10px 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            gap: 10px;
+            border-bottom: 1px solid #444;
+        }
+        header img {
+            width: 20px;
+            height: 20px;
+        }
+        header span {
+            font-size: 16px;
+            color: #fff;
         }
         .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
+            height: calc(100vh - 50px); /* Odejmij wysokość nagłówka */
         }
         .folder-icon {
             width: 24px;
@@ -34,10 +51,14 @@
     </style>
 </head>
 <body>
+    <header>
+        <img src="home-icon.png" alt="Home Icon">
+        <span>Index of /</span>
+    </header>
     <div class="container">
         <h1>Index of /</h1>
         <p>
-            <img src="folder-icon.png" alt="Folder Icon" class="folder-icon">
+            <img src="https://irylek.github.io/assets/folder.png" alt="Folder Icon" class="folder-icon">
             <a href="tools/">tools/</a>
         </p>
     </div>
