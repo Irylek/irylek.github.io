@@ -3,23 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video.js DASH Player</title>
-    <!-- Include Video.js CSS -->
-    <link href="https://vjs.zencdn.net/7.20.2/video-js.css" rel="stylesheet">
-    <!-- Include Video.js DASH plugin -->
-    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-dash@2.13.0/dist/videojs-dash.min.js"></script>
+    <title>Amazon Manifest Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-    <!-- Video.js player -->
-    <video id="video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
-        <source src="https://cdn-s-lb2.pluscdn.pl/ch/1502600/308/dash/20a18c30/live.mpd" type="application/dash+xml">
-    </video>
+    <h1>Amazon Manifest Converter</h1>
+    <p>Paste your manifest URL below and click "Convert" to get the cleaned-up URL.</p>
+    <textarea id="inputUrl" rows="4" cols="50" placeholder="Enter your manifest URL here..."></textarea>
+    <br>
+    <button onclick="handleConvert()">Convert</button>
+    <div id="output"></div>
 
-    <!-- Include Video.js JS -->
-    <script src="https://vjs.zencdn.net/7.20.2/video.js"></script>
     <script>
-        // Initialize the Video.js player with the DASH plugin
-        var player = videojs('video');
+        function convertAmazonManifest(url) {
+            try {
+                const urlObject = new URL(url);
+
+                urlObject.search = '';
+
+                const pathParts = urlObject.pathname.split('/');
+                const dmIndex = pathParts.indexOf('dm');
+                if (dmIndex !== -1 && pathParts[dmIndex + 1]) {
+                    pathParts.splice(dmIndex + 1, 1);
+                }
+                urlObject.pathname = pathParts.join('/');
+
+                return urlObject.toString();
+            } catch (error) {
+                console.error('Invalid URL:', error);
+                return 'Invalid URL. Please check your input.';
+            }
+        }
+
+        function handleConvert() {
+            const inputUrl = document.getElementById('inputUrl').value;
+            const outputDiv = document.getElementById('output');
+            const result = convertAmazonManifest(inputUrl);
+            outputDiv.textContent = result;
+        }
     </script>
 </body>
 </html>
