@@ -6,24 +6,86 @@
     <title>Amazon Manifest Converter</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         #output {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+            font-size: 1rem;
+            word-break: break-word;
         }
     </style>
 </head>
 <body>
-    <h1>Amazon Manifest Converter</h1>
-    <p>Paste your manifest URL below and click "Convert" to get the cleaned-up URL.</p>
-    <textarea id="inputUrl" rows="4" cols="50" placeholder="Enter your manifest URL here..."></textarea>
-    <br>
-    <button onclick="handleConvert()">Convert</button>
-    <div id="output"></div>
+    <div class="container">
+        <h1>Amazon Manifest Converter</h1>
+        <p>Paste your manifest URL below and click "Convert" to get the cleaned-up URL.</p>
+        <textarea id="inputUrl" placeholder="Enter your manifest URL here..."></textarea>
+        <br>
+        <button onclick="handleConvert()">Convert</button>
+        <div id="output"></div>
+    </div>
 
     <script>
         function convertAmazonManifest(url) {
