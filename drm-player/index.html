@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Stream Tester</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+        crossorigin="anonymous"
+    >
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.8/dist/shaka-player.ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.8/dist/shaka-player.compiled.min.js"></script>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/shaka-player/dist/controls.min.css"
+    />
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+        }
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        #settings {
+            width: 480px;
+            height: 100%;
+            padding: 30px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #111;
+        }
+        .form-control {
+            font-size: .875rem;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+        #player {
+            width: calc(100% - 480px);
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: black;
+        }
+        video {
+            width: 100%;
+            height: 100vh;
+        }
+        .btn-primary {
+            background-color: #333;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="settings">
+        <form id="player-form">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Manifest :</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="url"
+                    placeholder="https://example.com/manifest.mpd"
+                >
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Keys</label>
+                <textarea
+                    class="form-control"
+                    id="clearKeys"
+                    rows="8"
+                    placeholder="00000000000000000000000000000000:00000000000000000000000000000000"
+                ></textarea>
+            </div>
+            <div class="mb-3">
+                <input
+                    type="submit"
+                    class="btn btn-primary"
+                    value="Play"
+                >
+            </div>
+        </form>
+    </div>
+
+    <div
+        data-shaka-player-container
+        id="player"
+        data-shaka-player-cast-receiver-id="1BA79154"
+    >
+        <video data-shaka-player id="video" autoplay crossorigin="anonymous"></video>
+    </div>
+</div>
+
+<script>
+    async function init() {
+        const form = document.getElementById('player-form');
+        form.addEventListener('submit', handleFormSubmit);
+
+        document.addEventListener('shaka-ui-loaded', initPlayer);
+    }
+
+    async function initPlayer() {
+        const video = document.getElementById('video');
+        const ui = video['ui'];
+        const controls = ui.getControls();
+        const player = controls.getPlayer();
+
+        window.player = player;
+        window.ui = ui;
+
+        // Load the video with the provided URL and clearKeys
+        const urlInput = document.getElementById('url');
+        const clearKeysInput = document.getElementById('clearKeys');
+        const url = urlInput.value;
+        const clearKeys = parseClearKeys(clearKeysInput.value);
+
+        player.configure({
+            drm: {
+                clearKeys: clearKeys
+            }
+        });
+
+        await player.load(url);
+        player.play();
+    }
+
+    function parseClearKeys(clearKeysStr) {
+        const clearKeys = {};
+        const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
+        keyPairs.forEach(pair => {
+            const [kid, key] = pair.split(':');
+            clearKeys[kid.trim()] = key.trim();
+        });
+        return clearKeys;
+    }
+
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        const urlValue = document.getElementById("url").value;
+        if ( urlValue.includes("?decryption_key=") || urlValue.includes("&decryption_key=") || urlValue.includes("@") ) {
+            const separator = urlValue.includes("?decryption_key=")
+                ? "?decryption_key="
+                : (urlValue.includes("&decryption_key=")
+                    ? "&decryption_key="
+                    : "@");
+            const parts = urlValue.split(separator);
+            const url = parts[0];
+            const clearKeys = parts[1];
+            document.getElementById("url").value = url;
+            document.getElementById("clearKeys").value = clearKeys;
+        }
+        initPlayer();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
