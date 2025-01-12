@@ -209,44 +209,43 @@
         window.ui = ui;
     }
 
-    function parseClearKeys(clearKeysStr) {
-        const clearKeys = {};
-        const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
-        keyPairs.forEach(pair => {
-            const [kid, key] = pair.split(':');
-            if (kid && key) {
-                clearKeys[kid.trim()] = key.trim();
-            }
-        });
-        return clearKeys;
-    }
-
-    function handleFormSubmit(event) {
-        event.preventDefault();
-        const urlValue = document.getElementById("url").value;
-
-        if (
-            urlValue.includes("?decryption_key=") ||
-            urlValue.includes("&decryption_key=") ||
-            urlValue.includes("@")
-        ) {
-            const separator = urlValue.includes("?decryption_key=")
-                ? "?decryption_key="
-                : (urlValue.includes("&decryption_key=")
-                    ? "&decryption_key="
-                    : "@");
-            const parts = urlValue.split(separator);
-            const url = parts[0];
-            const clearKeys = parts[1];
-
-            document.getElementById("url").value = url;
-            document.getElementById("drmType").value = 'clearkey';
-            handleDrmTypeChange();
-            document.getElementById("clearKeys").value = clearKeys;
+function parseClearKeys(clearKeysStr) {
+    const clearKeys = {};
+    const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
+    keyPairs.forEach(pair => {
+        const [kid, key] = pair.split(':');
+        if (kid && key) {
+            clearKeys[btoa(kid.trim())] = btoa(key.trim());
         }
+    });
+    return clearKeys;
+}
 
-        initPlayer();
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    const urlValue = document.getElementById("url").value;
+    const drmType = document.getElementById("drmType").value;
+    const player = window.player;
+
+    if (drmType === 'clearkey') {
+        const clearKeysStr = document.getElementById("clearKeys").value;
+        const clearKeys = parseClearKeys(clearKeysStr);
+
+        player.configure({
+            drm: {
+                clearKeys: clearKeys,
+            },
+        });
     }
+
+    try {
+        await player.load(urlValue);
+        player.play();
+    } catch (error) {
+        console.error('Error loading the manifest:', error);
+    }
+}
+
 
     document.addEventListener('DOMContentLoaded', init);
 </script>
