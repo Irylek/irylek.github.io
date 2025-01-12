@@ -64,7 +64,7 @@
     <div id="settings">
         <form id="player-form">
             <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Manifest :</label>
+                <label for="url" class="form-label">Manifest :</label>
                 <input
                     type="text"
                     class="form-control"
@@ -72,8 +72,19 @@
                     placeholder="https://example.com/manifest.mpd"
                 >
             </div>
+
+            <!-- Selektor "Type" -->
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">Keys</label>
+                <label for="drmType" class="form-label">Type :</label>
+                <select id="drmType" class="form-control">
+                    <option value="clearkey">ClearKey</option>
+                    <option value="license">License URL</option>
+                </select>
+            </div>
+
+            <!-- Kontener na klucze (ClearKey) -->
+            <div class="mb-3" id="keysContainer">
+                <label for="clearKeys" class="form-label">Keys</label>
                 <textarea
                     class="form-control"
                     id="clearKeys"
@@ -81,6 +92,27 @@
                     placeholder="00000000000000000000000000000000:00000000000000000000000000000000"
                 ></textarea>
             </div>
+
+            <!-- Kontener na metodę DRM (tylko gdy License URL) -->
+            <div class="mb-3" id="methodContainer" style="display: none;">
+                <label for="drmMethod" class="form-label">Method :</label>
+                <select id="drmMethod" class="form-control">
+                    <option value="widevine">Widevine</option>
+                    <option value="playready">PlayReady</option>
+                </select>
+            </div>
+
+            <!-- Kontener na License URL (DRM) - domyślnie ukryty -->
+            <div class="mb-3" id="licenseUrlContainer" style="display: none;">
+                <label for="licenseUrl" class="form-label">License URL</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="licenseUrl"
+                    placeholder="https://example.com/license"
+                >
+            </div>
+
             <div class="mb-3">
                 <input
                     type="submit"
@@ -105,7 +137,30 @@
         const form = document.getElementById('player-form');
         form.addEventListener('submit', handleFormSubmit);
 
+        // Obsługa zmiany "Type" - przełączanie widoczności inputów
+        const drmTypeSelect = document.getElementById('drmType');
+        drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+
         document.addEventListener('shaka-ui-loaded', initPlayer);
+    }
+
+    function handleDrmTypeChange() {
+        const drmType = document.getElementById('drmType').value;
+        const keysContainer = document.getElementById('keysContainer');
+        const methodContainer = document.getElementById('methodContainer');
+        const licenseUrlContainer = document.getElementById('licenseUrlContainer');
+
+        if (drmType === 'clearkey') {
+            // ClearKey wyświetla keys, ukrywa license i method
+            keysContainer.style.display = 'block';
+            methodContainer.style.display = 'none';
+            licenseUrlContainer.style.display = 'none';
+        } else {
+            // License URL wyświetla method i licenseUrl
+            keysContainer.style.display = 'none';
+            methodContainer.style.display = 'block';
+            licenseUrlContainer.style.display = 'block';
+        }
     }
 
     async function initPlayer() {
@@ -117,36 +172,73 @@
         window.player = player;
         window.ui = ui;
 
-        // Load the video with the provided URL and clearKeys
+        // Wczytaj wartości z formularza
         const urlInput = document.getElementById('url');
-        const clearKeysInput = document.getElementById('clearKeys');
+        const drmType = document.getElementById('drmType').value;
         const url = urlInput.value;
-        const clearKeys = parseClearKeys(clearKeysInput.value);
 
-        player.configure({
-            drm: {
-                clearKeys: clearKeys
+        // Konfiguracja DRM zależna od wybranego typu
+        if (drmType === 'clearkey') {
+            const clearKeysInput = document.getElementById('clearKeys').value;
+            const clearKeys = parseClearKeys(clearKeysInput);
+            player.configure({
+                drm: {
+                    clearKeys: clearKeys
+                }
+            });
+        } else {
+            // Licencja
+            const drmMethod = document.getElementById('drmMethod').value;
+            const licenseUrl = document.getElementById('licenseUrl').value;
+
+            // W zależności od metody:
+            if (drmMethod === 'widevine') {
+                player.configure({
+                    drm: {
+                        servers: {
+                            'com.widevine.alpha': licenseUrl
+                        }
+                    }
+                });
+            } else if (drmMethod === 'playready') {
+                player.configure({
+                    drm: {
+                        servers: {
+                            'com.microsoft.playready': licenseUrl
+                        }
+                    }
+                });
             }
-        });
+        }
 
+        // Ładowanie wybranego manifestu
         await player.load(url);
         player.play();
     }
 
     function parseClearKeys(clearKeysStr) {
         const clearKeys = {};
+        // Zamieniamy nowe linie na przecinki i rozbijamy po przecinkach
         const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
         keyPairs.forEach(pair => {
             const [kid, key] = pair.split(':');
-            clearKeys[kid.trim()] = key.trim();
+            if (kid && key) {
+                clearKeys[kid.trim()] = key.trim();
+            }
         });
         return clearKeys;
     }
 
+    // Obsługa submita formularza (sprawdzanie ?decryption_key=... itp.)
     function handleFormSubmit(event) {
         event.preventDefault();
         const urlValue = document.getElementById("url").value;
-        if ( urlValue.includes("?decryption_key=") || urlValue.includes("&decryption_key=") || urlValue.includes("@") ) {
+
+        if (
+            urlValue.includes("?decryption_key=") ||
+            urlValue.includes("&decryption_key=") ||
+            urlValue.includes("@")
+        ) {
             const separator = urlValue.includes("?decryption_key=")
                 ? "?decryption_key="
                 : (urlValue.includes("&decryption_key=")
@@ -155,9 +247,14 @@
             const parts = urlValue.split(separator);
             const url = parts[0];
             const clearKeys = parts[1];
+
             document.getElementById("url").value = url;
+            // Ustawiamy typ na clearkey i przełączamy widoki
+            document.getElementById("drmType").value = 'clearkey';
+            handleDrmTypeChange();
             document.getElementById("clearKeys").value = clearKeys;
         }
+
         initPlayer();
     }
 
