@@ -199,15 +199,28 @@
         player.play();
     }
 
-    async function initPlayer() {
-        const video = document.getElementById('video');
-        const ui = video['ui'];
-        const controls = ui.getControls();
-        const player = controls.getPlayer();
+async function initPlayer() {
+    const video = document.getElementById('video');
+    const ui = video['ui'];
+    const controls = ui.getControls();
+    const player = controls.getPlayer(); // Retrieve the Shaka Player instance
 
-        window.player = player;
-        window.ui = ui;
+    if (!player) {
+        console.error('Shaka Player failed to initialize.');
+        return;
     }
+
+    window.player = player;
+    window.ui = ui;
+
+    player.addEventListener('error', onPlayerError);
+    console.log('Shaka Player initialized successfully.');
+}
+
+function onPlayerError(event) {
+    console.error('Shaka Player Error:', event.detail);
+}
+
 
 function parseClearKeys(clearKeysStr) {
     const clearKeys = {};
@@ -227,24 +240,28 @@ async function handleFormSubmit(event) {
     const drmType = document.getElementById("drmType").value;
     const player = window.player;
 
-    if (drmType === 'clearkey') {
-        const clearKeysStr = document.getElementById("clearKeys").value;
-        const clearKeys = parseClearKeys(clearKeysStr);
-
-        player.configure({
-            drm: {
-                clearKeys: clearKeys,
-            },
-        });
-    }
-
     try {
-        await player.load(urlValue);
-        player.play();
+        if (drmType === 'clearkey') {
+            const clearKeysStr = document.getElementById("clearKeys").value;
+            const clearKeys = parseClearKeys(clearKeysStr);
+
+            player.configure({
+                drm: {
+                    clearKeys: clearKeys,
+                },
+            });
+        }
+
+        await player.load(urlValue); // Load the manifest
+        console.log('Manifest loaded successfully.');
+
+        const video = document.getElementById('video');
+        video.play(); // Start playback
     } catch (error) {
-        console.error('Error loading the manifest:', error);
+        console.error('Error loading the manifest or starting playback:', error);
     }
 }
+
 
 
     document.addEventListener('DOMContentLoaded', init);
