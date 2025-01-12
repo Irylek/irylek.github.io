@@ -176,7 +176,7 @@
         const urlInput = document.getElementById('url');
         const licenseUrlInput = document.getElementById('licenseUrl');
 
-        const manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
+        let manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
         let licenseUrl = '';
 
         if (drmMethod === 'widevine') {
