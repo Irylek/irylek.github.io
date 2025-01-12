@@ -98,10 +98,11 @@ const widevineConfigs = [{
 
     function handleTestStream() {
         const drmMethod = drmMethodSelect.value;
-        let manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
+        let manifestUrl = '';
         let licenseUrl = '';
 
         if (drmMethod === 'widevine') {
+            manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
             licenseUrl = 'https://proxy.staging.widevine.com/proxy';
         } else if (drmMethod === 'playready') {
             manifestUrl = 'https://test.playready.microsoft.com/media/profficialsite/tearsofsteel_4k.ism/manifest.mpd';
@@ -193,10 +194,9 @@ const widevineConfigs = [{
             const url = parts[0];
             const clearKeys = parts[1];
 
-            // Ustawiamy ClearKey automatycznie
             urlInput.value = url;
             drmTypeSelect.value = 'clearkey';
-            handleDrmTypeChange(); // pokaże/ukryje odpowiednie pola
+            handleDrmTypeChange();
             clearKeysText.value = clearKeys;
         }
 
