@@ -52,7 +52,6 @@
             width: 100%;
             height: 100vh;
         }
-        /* Zmieniam kolor przycisku .btn-primary na bardziej "niebieski", jeśli chcesz */
         .btn-primary {
             background-color: #0d6efd !important;
             border-color: #0d6efd !important;
@@ -64,6 +63,8 @@
 <div id="container">
     <div id="settings">
         <form id="player-form">
+
+            <!-- Manifest -->
             <div class="mb-3">
                 <label for="url" class="form-label">Manifest:</label>
                 <input
@@ -74,6 +75,7 @@
                 >
             </div>
 
+            <!-- DRM Type -->
             <div class="mb-3">
                 <label for="drmType" class="form-label">Type:</label>
                 <select id="drmType" class="form-control">
@@ -82,6 +84,7 @@
                 </select>
             </div>
 
+            <!-- ClearKeys container -->
             <div class="mb-3" id="keysContainer">
                 <label for="clearKeys" class="form-label">Keys:</label>
                 <textarea
@@ -92,14 +95,18 @@
                 ></textarea>
             </div>
 
+            <!-- DRM Method (widevine/playready) -->
             <div class="mb-3" id="methodContainer" style="display: none;">
                 <label for="drmMethod" class="form-label">Method:</label>
                 <select id="drmMethod" class="form-control">
+                    <!-- Nowa opcja, by nic nie było wybrane domyślnie -->
+                    <option value="">Select a method</option>
                     <option value="widevine">Widevine</option>
                     <option value="playready">PlayReady</option>
                 </select>
             </div>
 
+            <!-- License URL -->
             <div class="mb-3" id="licenseUrlContainer" style="display: none;">
                 <label for="licenseUrl" class="form-label">License URL:</label>
                 <input
@@ -110,18 +117,18 @@
                 >
             </div>
 
-            <!--
-              Zmiana kolejności i dodanie kontenera .text-center oraz w-100 
-              dla pełnej szerokości przycisków
-            -->
+            <!-- PLAY button -->
             <div class="mb-3 text-center">
                 <input
                     type="submit"
                     class="btn btn-primary w-100 mb-2"
                     value="Play"
+                    disabled
+                    id="playButton"
                 >
             </div>
 
+            <!-- Wanna play a Test Stream? -->
             <div class="mb-3 text-center" style="display: none;" id="testStreamContainer">
                 <button
                     type="button"
@@ -150,7 +157,6 @@
 
 <script>
     // Prosta konfiguracja do "pytania" przeglądarki, czy obsługuje Widevine i PlayReady.
-    // Możesz ją dopasować do swoich potrzeb – np. do innych kodeków, itp.
     const widevineConfigs = [{
         initDataTypes: ['cenc'],
         videoCapabilities: [
@@ -171,23 +177,22 @@
         ]
     }];
 
-    async function detectDRMSupport() {
-        const drmMethodSelect = document.getElementById('drmMethod');
+    // Referencje do inputów
+    let drmTypeSelect, drmMethodSelect, urlInput, clearKeysText, licenseUrlInput, playButton;
 
-        // Pobieramy elementy opcji
+    async function detectDRMSupport() {
+        // Pobieramy elementy opcji z <select id="drmMethod">
         const widevineOption = drmMethodSelect.querySelector('option[value="widevine"]');
         const playreadyOption = drmMethodSelect.querySelector('option[value="playready"]');
 
-        // Domyślnie nie zmieniamy tekstu, jeśli brak błędów
+        // Domyślnie
         let widevineText = 'Widevine';
         let playreadyText = 'PlayReady';
 
         // Widevine
         try {
             await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineConfigs);
-            // Jeśli się uda – nic nie zmieniamy, bo widevine jest wspierany
         } catch (err) {
-            // Jeśli błąd – brak wsparcia
             widevineText += ' (Your browser does not support that)';
             widevineOption.disabled = true;
         }
@@ -204,30 +209,46 @@
         playreadyOption.textContent = playreadyText;
     }
 
-    async function init() {
-        // Od razu wywołujemy detekcję DRM
-        await detectDRMSupport();
+    /**
+     * Walidacja wypełnienia pól:
+     * - dla ClearKey:  url i clearKeys
+     * - dla License:   drmMethod != "", url != "", licenseUrl != ""
+     */
+    function validateInputs() {
+        const drmType = drmTypeSelect.value.trim();
+        const urlVal = urlInput.value.trim();
+        const clearKeysVal = clearKeysText.value.trim();
+        const drmMethodVal = drmMethodSelect.value.trim();
+        const licenseUrlVal = licenseUrlInput.value.trim();
 
-        const form = document.getElementById('player-form');
-        form.addEventListener('submit', handleFormSubmit);
+        let isValid = false;
 
-        const drmTypeSelect = document.getElementById('drmType');
-        drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+        if (drmType === 'clearkey') {
+            // Wymagane: url i clearKeys
+            isValid = (urlVal !== '' && clearKeysVal !== '');
+        } else {
+            // 'license' => Wymagane: method != "", url != "", licenseUrl != ""
+            // plus sprawdzamy, czy nie wybrano opcji disabled
+            // (np. widevine jest disabled przy braku wsparcia)
+            const selectedOption = drmMethodSelect.querySelector('option:checked');
+            const isOptionDisabled = selectedOption ? selectedOption.disabled : false;
 
-        const testStreamButton = document.getElementById('testStreamButton');
-        testStreamButton.addEventListener('click', handleTestStream);
+            isValid = (
+                drmMethodVal !== '' &&
+                !isOptionDisabled &&
+                urlVal !== '' &&
+                licenseUrlVal !== ''
+            );
+        }
 
-        // Gdy Shaka UI się załaduje:
-        document.addEventListener('shaka-ui-loaded', initPlayer);
+        playButton.disabled = !isValid;
     }
 
     function handleDrmTypeChange() {
-        const drmType = document.getElementById('drmType').value;
+        const drmType = drmTypeSelect.value;
         const keysContainer = document.getElementById('keysContainer');
         const methodContainer = document.getElementById('methodContainer');
         const licenseUrlContainer = document.getElementById('licenseUrlContainer');
-
-        // Nowy element do sterowania widocznością kontenera z testowym przyciskiem
         const testStreamContainer = document.getElementById('testStreamContainer');
 
         if (drmType === 'clearkey') {
@@ -235,20 +256,22 @@
             methodContainer.style.display = 'none';
             licenseUrlContainer.style.display = 'none';
             testStreamContainer.style.display = 'none';
+
+            // Gdy przełączamy się z license na clearkey, zeruj method:
+            drmMethodSelect.value = '';
+            licenseUrlInput.value = '';
+
         } else {
-            // license = widevine albo playready
             keysContainer.style.display = 'none';
             methodContainer.style.display = 'block';
             licenseUrlContainer.style.display = 'block';
             testStreamContainer.style.display = 'block';
         }
+        validateInputs();
     }
 
     function handleTestStream() {
-        const drmMethod = document.getElementById('drmMethod').value;
-        const urlInput = document.getElementById('url');
-        const licenseUrlInput = document.getElementById('licenseUrl');
-
+        const drmMethod = drmMethodSelect.value;
         let manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
         let licenseUrl = '';
 
@@ -260,6 +283,8 @@
         }
         urlInput.value = manifestUrl;
         licenseUrlInput.value = licenseUrl;
+
+        validateInputs();
     }
 
     async function initPlayer() {
@@ -271,22 +296,21 @@
         window.player = player;
         window.ui = ui;
 
-        const urlInput = document.getElementById('url');
-        const drmType = document.getElementById('drmType').value;
+        const drmType = drmTypeSelect.value;
         const url = urlInput.value;
 
-        // Konfigurujemy klucze albo licencje:
+        // ClearKey
         if (drmType === 'clearkey') {
-            const clearKeysInput = document.getElementById('clearKeys').value;
-            const clearKeys = parseClearKeys(clearKeysInput);
+            const clearKeys = parseClearKeys(clearKeysText.value);
             player.configure({
                 drm: {
                     clearKeys: clearKeys
                 }
             });
         } else {
-            const drmMethod = document.getElementById('drmMethod').value;
-            const licenseUrl = document.getElementById('licenseUrl').value;
+            // License
+            const drmMethod = drmMethodSelect.value;
+            const licenseUrl = licenseUrlInput.value;
 
             if (drmMethod === 'widevine') {
                 player.configure({
@@ -325,9 +349,15 @@
 
     function handleFormSubmit(event) {
         event.preventDefault();
-        const urlValue = document.getElementById("url").value;
 
-        // Jeśli URL zawiera parametr / klucz do ClearKey
+        // Dodatkowa kontrola – jeśli walidacja jest zła, nic nie robimy:
+        if (playButton.disabled) {
+            return;
+        }
+
+        const urlValue = urlInput.value;
+
+        // Obsługa sytuacji, gdy URL ma w sobie klucz ClearKey
         if (
             urlValue.includes("?decryption_key=") ||
             urlValue.includes("&decryption_key=") ||
@@ -342,13 +372,50 @@
             const url = parts[0];
             const clearKeys = parts[1];
 
-            document.getElementById("url").value = url;
-            document.getElementById("drmType").value = 'clearkey';
-            handleDrmTypeChange();
-            document.getElementById("clearKeys").value = clearKeys;
+            // Ustawiamy ClearKey automatycznie
+            urlInput.value = url;
+            drmTypeSelect.value = 'clearkey';
+            handleDrmTypeChange(); // pokaże/ukryje odpowiednie pola
+            clearKeysText.value = clearKeys;
         }
 
         initPlayer();
+    }
+
+    async function init() {
+        // Zapamiętujemy referencje do kluczowych elementów
+        drmTypeSelect = document.getElementById('drmType');
+        drmMethodSelect = document.getElementById('drmMethod');
+        urlInput = document.getElementById('url');
+        clearKeysText = document.getElementById('clearKeys');
+        licenseUrlInput = document.getElementById('licenseUrl');
+        playButton = document.getElementById('playButton');
+
+        // Detekcja DRM
+        await detectDRMSupport();
+
+        // Eventy formularza
+        const form = document.getElementById('player-form');
+        form.addEventListener('submit', handleFormSubmit);
+
+        // Zmiana type (clearkey/license)
+        drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+
+        // Pola, których wartości kontrolujemy w walidacji
+        drmMethodSelect.addEventListener('change', validateInputs);
+        urlInput.addEventListener('input', validateInputs);
+        clearKeysText.addEventListener('input', validateInputs);
+        licenseUrlInput.addEventListener('input', validateInputs);
+
+        // Przycisk testowy
+        const testStreamButton = document.getElementById('testStreamButton');
+        testStreamButton.addEventListener('click', handleTestStream);
+
+        // Gdy Shaka UI się załaduje:
+        document.addEventListener('shaka-ui-loaded', initPlayer);
+
+        // Na start sprawdzamy, czy możemy włączyć/wyłączyć przycisk Play
+        validateInputs();
     }
 
     document.addEventListener('DOMContentLoaded', init);
