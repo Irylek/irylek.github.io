@@ -138,7 +138,65 @@
 </div>
 
 <script>
+    // Prosta konfiguracja do "pytania" przeglądarki, czy obsługuje Widevine i PlayReady.
+    // Możesz ją dopasować do swoich potrzeb – np. do innych kodeków, itp.
+    const widevineConfigs = [{
+        initDataTypes: ['cenc'],
+        videoCapabilities: [
+            { contentType: 'video/mp4; codecs="avc1.42E01E"' }
+        ],
+        audioCapabilities: [
+            { contentType: 'audio/mp4; codecs="mp4a.40.2"' }
+        ]
+    }];
+
+    const playreadyConfigs = [{
+        initDataTypes: ['cenc'],
+        videoCapabilities: [
+            { contentType: 'video/mp4; codecs="avc1.42E01E"' }
+        ],
+        audioCapabilities: [
+            { contentType: 'audio/mp4; codecs="mp4a.40.2"' }
+        ]
+    }];
+
+    async function detectDRMSupport() {
+        const drmMethodSelect = document.getElementById('drmMethod');
+
+        // Pobieramy elementy opcji
+        const widevineOption = drmMethodSelect.querySelector('option[value="widevine"]');
+        const playreadyOption = drmMethodSelect.querySelector('option[value="playready"]');
+
+        // Domyślnie nie zmieniamy tekstu, jeśli brak błędów
+        let widevineText = 'Widevine';
+        let playreadyText = 'PlayReady';
+
+        // Widevine
+        try {
+            await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineConfigs);
+            // Jeśli się uda – nic nie zmieniamy, bo widevine jest wspierany
+        } catch (err) {
+            // Jeśli błąd – brak wsparcia
+            widevineText += ' (Your browser does not support that)';
+            widevineOption.disabled = true;
+        }
+
+        // PlayReady
+        try {
+            await navigator.requestMediaKeySystemAccess('com.microsoft.playready', playreadyConfigs);
+        } catch (err) {
+            playreadyText += ' (Your browser does not support that)';
+            playreadyOption.disabled = true;
+        }
+
+        widevineOption.textContent = widevineText;
+        playreadyOption.textContent = playreadyText;
+    }
+
     async function init() {
+        // Od razu wywołujemy detekcję DRM
+        await detectDRMSupport();
+
         const form = document.getElementById('player-form');
         form.addEventListener('submit', handleFormSubmit);
 
@@ -148,6 +206,7 @@
         const testStreamButton = document.getElementById('testStreamButton');
         testStreamButton.addEventListener('click', handleTestStream);
 
+        // Gdy Shaka UI się załaduje:
         document.addEventListener('shaka-ui-loaded', initPlayer);
     }
 
@@ -202,6 +261,7 @@
         const drmType = document.getElementById('drmType').value;
         const url = urlInput.value;
 
+        // Konfigurujemy klucze albo licencje:
         if (drmType === 'clearkey') {
             const clearKeysInput = document.getElementById('clearKeys').value;
             const clearKeys = parseClearKeys(clearKeysInput);
@@ -253,6 +313,7 @@
         event.preventDefault();
         const urlValue = document.getElementById("url").value;
 
+        // Jeśli URL zawiera parametr / klucz do ClearKey
         if (
             urlValue.includes("?decryption_key=") ||
             urlValue.includes("&decryption_key=") ||
