@@ -171,32 +171,36 @@
         }
     }
 
-    async function playTestStream() {
-        const drmMethod = document.getElementById('drmMethod').value;
-        const player = window.player;
+async function playTestStream() {
+    const drmMethod = document.getElementById('drmMethod').value;
+    const player = window.player;
 
-        const manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
-        let licenseUrl = '';
+    const manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
+    let licenseUrl = '';
 
-        if (drmMethod === 'widevine') {
-            licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
-        } else if (drmMethod === 'playready') {
-            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw==';
-        }
+    if (drmMethod === 'widevine') {
+        licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
+    } else if (drmMethod === 'playready') {
+        licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw==';
+    }
 
-        player.configure({
-            drm: {
-                servers: drmMethod === 'widevine' ? {
-                    'com.widevine.alpha': licenseUrl
-                } : {
-                    'com.microsoft.playready': licenseUrl
-                }
+    player.configure({
+        drm: {
+            servers: drmMethod === 'widevine' ? {
+                'com.widevine.alpha': licenseUrl
+            } : {
+                'com.microsoft.playready': licenseUrl
             }
-        });
+        }
+    });
 
+    try {
         await player.load(manifestUrl);
         player.play();
+    } catch (error) {
+        console.error('Error loading and playing the stream:', error);
     }
+}
 
     async function initPlayer() {
         const video = document.getElementById('video');
