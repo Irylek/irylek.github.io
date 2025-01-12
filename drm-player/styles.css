@@ -1,0 +1,41 @@
+body {
+            background-color: #000;
+            color: #fff;
+        }
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        #settings {
+            width: 480px;
+            height: 100%;
+            padding: 30px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #111;
+        }
+        .form-control {
+            font-size: .875rem;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+        #player {
+            width: calc(100% - 480px);
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: black;
+        }
+        video {
+            width: 100%;
+            height: 100vh;
+        }
+        .btn-primary {
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
