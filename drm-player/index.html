@@ -146,7 +146,7 @@
         drmTypeSelect.addEventListener('change', handleDrmTypeChange);
 
         const testStreamButton = document.getElementById('testStreamButton');
-        testStreamButton.addEventListener('click', playTestStream);
+        testStreamButton.addEventListener('click', handleTestStream);
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
     }
@@ -171,101 +171,112 @@
         }
     }
 
-    async function playTestStream() {
+    function handleTestStream() {
         const drmMethod = document.getElementById('drmMethod').value;
-        const player = window.player;
+        const urlInput = document.getElementById('url');
+        const licenseUrlInput = document.getElementById('licenseUrl');
 
-        let manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
+        const manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
         let licenseUrl = '';
 
         if (drmMethod === 'widevine') {
             licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
         } else if (drmMethod === 'playready') {
-            manifestUrl = 'https://test.playready.microsoft.com/media/profficialsite/tearsofsteel_4k.ism/manifest.mpd';
-            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)';
+            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw==';
         }
 
-        player.configure({
-            drm: {
-                servers: drmMethod === 'widevine' ? {
-                    'com.widevine.alpha': licenseUrl
-                } : {
-                    'com.microsoft.playready': licenseUrl
-                }
-            }
-        });
+        urlInput.value = manifestUrl;
+        licenseUrlInput.value = licenseUrl;
+    }
 
-        await player.load(manifestUrl);
+    async function initPlayer() {
+        const video = document.getElementById('video');
+        const ui = video['ui'];
+        const controls = ui.getControls();
+        const player = controls.getPlayer();
+
+        window.player = player;
+        window.ui = ui;
+
+        const urlInput = document.getElementById('url');
+        const drmType = document.getElementById('drmType').value;
+        const url = urlInput.value;
+
+        if (drmType === 'clearkey') {
+            const clearKeysInput = document.getElementById('clearKeys').value;
+            const clearKeys = parseClearKeys(clearKeysInput);
+            player.configure({
+                drm: {
+                    clearKeys: clearKeys
+                }
+            });
+        } else {
+            const drmMethod = document.getElementById('drmMethod').value;
+            const licenseUrl = document.getElementById('licenseUrl').value;
+
+            if (drmMethod === 'widevine') {
+                player.configure({
+                    drm: {
+                        servers: {
+                            'com.widevine.alpha': licenseUrl
+                        }
+                    }
+                });
+            } else if (drmMethod === 'playready') {
+                player.configure({
+                    drm: {
+                        servers: {
+                            'com.microsoft.playready': licenseUrl
+                        }
+                    }
+                });
+            }
+        }
+
+        await player.load(url);
         player.play();
     }
 
-async function initPlayer() {
-    const video = document.getElementById('video');
-    const ui = video['ui'];
-    const controls = ui.getControls();
-    const player = controls.getPlayer(); // Retrieve the Shaka Player instance
-
-    if (!player) {
-        console.error('Shaka Player failed to initialize.');
-        return;
+    function parseClearKeys(clearKeysStr) {
+        const clearKeys = {};
+        const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
+        keyPairs.forEach(pair => {
+            const [kid, key] = pair.split(':');
+            if (kid && key) {
+                clearKeys[kid.trim()] = key.trim();
+            }
+        });
+        return clearKeys;
     }
 
-    window.player = player;
-    window.ui = ui;
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        const urlValue = document.getElementById("url").value;
 
-    player.addEventListener('error', onPlayerError);
-    console.log('Shaka Player initialized successfully.');
-}
+        if (
+            urlValue.includes("?decryption_key=") ||
+            urlValue.includes("&decryption_key=") ||
+            urlValue.includes("@")
+        ) {
+            const separator = urlValue.includes("?decryption_key=")
+                ? "?decryption_key="
+                : (urlValue.includes("&decryption_key=")
+                    ? "&decryption_key="
+                    : "@");
+            const parts = urlValue.split(separator);
+            const url = parts[0];
+            const clearKeys = parts[1];
 
-function onPlayerError(event) {
-    console.error('Shaka Player Error:', event.detail);
-}
-
-
-function parseClearKeys(clearKeysStr) {
-    const clearKeys = {};
-    const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
-    keyPairs.forEach(pair => {
-        const [kid, key] = pair.split(':');
-        if (kid && key) {
-            clearKeys[btoa(kid.trim())] = btoa(key.trim());
-        }
-    });
-    return clearKeys;
-}
-
-async function handleFormSubmit(event) {
-    event.preventDefault();
-    const urlValue = document.getElementById("url").value;
-    const drmType = document.getElementById("drmType").value;
-    const player = window.player;
-
-    try {
-        if (drmType === 'clearkey') {
-            const clearKeysStr = document.getElementById("clearKeys").value;
-            const clearKeys = parseClearKeys(clearKeysStr);
-
-            player.configure({
-                drm: {
-                    clearKeys: clearKeys,
-                },
-            });
+            document.getElementById("url").value = url;
+            document.getElementById("drmType").value = 'clearkey';
+            handleDrmTypeChange();
+            document.getElementById("clearKeys").value = clearKeys;
         }
 
-        await player.load(urlValue); // Load the manifest
-        console.log('Manifest loaded successfully.');
-
-        const video = document.getElementById('video');
-        video.play(); // Start playback
-    } catch (error) {
-        console.error('Error loading the manifest or starting playback:', error);
+        initPlayer();
     }
-}
-
-
 
     document.addEventListener('DOMContentLoaded', init);
 </script>
-
 </body>
 </html>
