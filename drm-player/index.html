@@ -110,20 +110,20 @@
             </div>
 
             <div class="mb-3">
+                <input
+                    type="submit"
+                    class="btn btn-primary"
+                    value="Play"
+                >
+            </div>
+            
+            <div class="mb-3">
                 <button
                     type="button"
                     id="testStreamButton"
                     class="btn btn-secondary"
                     style="display: none;"
                 >Play Test Stream</button>
-            </div>
-
-            <div class="mb-3">
-                <input
-                    type="submit"
-                    class="btn btn-primary"
-                    value="Play"
-                >
             </div>
         </form>
     </div>
@@ -146,7 +146,7 @@
         drmTypeSelect.addEventListener('change', handleDrmTypeChange);
 
         const testStreamButton = document.getElementById('testStreamButton');
-        testStreamButton.addEventListener('click', handleTestStream);
+        testStreamButton.addEventListener('click', playTestStream);
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
     }
@@ -171,10 +171,9 @@
         }
     }
 
-    function handleTestStream() {
+    async function playTestStream() {
         const drmMethod = document.getElementById('drmMethod').value;
-        const urlInput = document.getElementById('url');
-        const licenseUrlInput = document.getElementById('licenseUrl');
+        const player = window.player;
 
         const manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
         let licenseUrl = '';
@@ -185,8 +184,18 @@
             licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw==';
         }
 
-        urlInput.value = manifestUrl;
-        licenseUrlInput.value = licenseUrl;
+        player.configure({
+            drm: {
+                servers: drmMethod === 'widevine' ? {
+                    'com.widevine.alpha': licenseUrl
+                } : {
+                    'com.microsoft.playready': licenseUrl
+                }
+            }
+        });
+
+        await player.load(manifestUrl);
+        player.play();
     }
 
     async function initPlayer() {
@@ -197,44 +206,6 @@
 
         window.player = player;
         window.ui = ui;
-
-        const urlInput = document.getElementById('url');
-        const drmType = document.getElementById('drmType').value;
-        const url = urlInput.value;
-
-        if (drmType === 'clearkey') {
-            const clearKeysInput = document.getElementById('clearKeys').value;
-            const clearKeys = parseClearKeys(clearKeysInput);
-            player.configure({
-                drm: {
-                    clearKeys: clearKeys
-                }
-            });
-        } else {
-            const drmMethod = document.getElementById('drmMethod').value;
-            const licenseUrl = document.getElementById('licenseUrl').value;
-
-            if (drmMethod === 'widevine') {
-                player.configure({
-                    drm: {
-                        servers: {
-                            'com.widevine.alpha': licenseUrl
-                        }
-                    }
-                });
-            } else if (drmMethod === 'playready') {
-                player.configure({
-                    drm: {
-                        servers: {
-                            'com.microsoft.playready': licenseUrl
-                        }
-                    }
-                });
-            }
-        }
-
-        await player.load(url);
-        player.play();
     }
 
     function parseClearKeys(clearKeysStr) {
