@@ -148,29 +148,7 @@
         const testStreamButton = document.getElementById('testStreamButton');
         testStreamButton.addEventListener('click', playTestStream);
 
-        await checkDRMSupport();
-
         document.addEventListener('shaka-ui-loaded', initPlayer);
-    }
-
-    async function checkDRMSupport() {
-        const drmMethodSelect = document.getElementById('drmMethod');
-        const widevineSupported = await shaka.Player.probeSupport().then(support => support.drm['com.widevine.alpha']);
-        const playreadySupported = await shaka.Player.probeSupport().then(support => support.drm['com.microsoft.playready']);
-
-        drmMethodSelect.innerHTML = '';
-
-        if (widevineSupported) {
-            drmMethodSelect.innerHTML += '<option value="widevine">Widevine</option>';
-        } else {
-            drmMethodSelect.innerHTML += '<option value="widevine" disabled>Widevine (Your browser does not support Widevine)</option>';
-        }
-
-        if (playreadySupported) {
-            drmMethodSelect.innerHTML += '<option value="playready">PlayReady</option>';
-        } else {
-            drmMethodSelect.innerHTML += '<option value="playready" disabled>PlayReady (Your browser does not support PlayReady)</option>';
-        }
     }
 
     function handleDrmTypeChange() {
@@ -193,28 +171,21 @@
         }
     }
 
-async function playTestStream() {
-    const drmMethod = document.getElementById('drmMethod').value;
+    async function playTestStream() {
+        const drmMethod = document.getElementById('drmMethod').value;
+        const player = window.player;
 
-    // Check if player is initialized
-    if (!window.player) {
-        console.error('Player is not initialized.');
-        return;
-    }
+        let manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
+        let licenseUrl = '';
 
-    let manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
-    let licenseUrl = '';
+        if (drmMethod === 'widevine') {
+            licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
+        } else if (drmMethod === 'playready') {
+            manifestUrl = 'https://test.playready.microsoft.com/media/profficialsite/tearsofsteel_4k.ism/manifest.mpd';
+            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)';
+        }
 
-    if (drmMethod === 'widevine') {
-        licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
-    } else if (drmMethod === 'playready') {
-        manifestUrl = 'https://test.playready.microsoft.com/media/profficialsite/tearsofsteel_4k.ism/manifest.mpd';
-        licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)';
-    }
-
-    try {
-        // Configure DRM servers
-        window.player.configure({
+        player.configure({
             drm: {
                 servers: drmMethod === 'widevine' ? {
                     'com.widevine.alpha': licenseUrl
@@ -224,13 +195,9 @@ async function playTestStream() {
             }
         });
 
-        // Load and play the manifest
-        await window.player.load(manifestUrl);
-        await window.player.play();
-    } catch (error) {
-        console.error('Error playing the test stream:', error);
+        await player.load(manifestUrl);
+        player.play();
     }
-}
 
     async function initPlayer() {
         const video = document.getElementById('video');
