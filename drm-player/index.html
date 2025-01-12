@@ -81,7 +81,6 @@
                 </select>
             </div>
 
-            <!-- Kontener na klucze (ClearKey) -->
             <div class="mb-3" id="keysContainer">
                 <label for="clearKeys" class="form-label">Keys:</label>
                 <textarea
@@ -92,7 +91,6 @@
                 ></textarea>
             </div>
 
-            <!-- Kontener na metodę DRM (tylko gdy License URL) -->
             <div class="mb-3" id="methodContainer" style="display: none;">
                 <label for="drmMethod" class="form-label">Method:</label>
                 <select id="drmMethod" class="form-control">
@@ -101,7 +99,6 @@
                 </select>
             </div>
 
-            <!-- Kontener na License URL (DRM) - domyślnie ukryty -->
             <div class="mb-3" id="licenseUrlContainer" style="display: none;">
                 <label for="licenseUrl" class="form-label">License URL:</label>
                 <input
@@ -110,6 +107,15 @@
                     id="licenseUrl"
                     placeholder="https://example.com/license"
                 >
+            </div>
+
+            <div class="mb-3">
+                <button
+                    type="button"
+                    id="testStreamButton"
+                    class="btn btn-secondary"
+                    style="display: none;"
+                >Play Test Stream</button>
             </div>
 
             <div class="mb-3">
@@ -136,9 +142,11 @@
         const form = document.getElementById('player-form');
         form.addEventListener('submit', handleFormSubmit);
 
-        // Obsługa zmiany "Type" - przełączanie widoczności inputów
         const drmTypeSelect = document.getElementById('drmType');
         drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+
+        const testStreamButton = document.getElementById('testStreamButton');
+        testStreamButton.addEventListener('click', handleTestStream);
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
     }
@@ -148,18 +156,37 @@
         const keysContainer = document.getElementById('keysContainer');
         const methodContainer = document.getElementById('methodContainer');
         const licenseUrlContainer = document.getElementById('licenseUrlContainer');
+        const testStreamButton = document.getElementById('testStreamButton');
 
         if (drmType === 'clearkey') {
-            // ClearKey wyświetla keys, ukrywa license i method
             keysContainer.style.display = 'block';
             methodContainer.style.display = 'none';
             licenseUrlContainer.style.display = 'none';
+            testStreamButton.style.display = 'none';
         } else {
-            // License URL wyświetla method i licenseUrl
             keysContainer.style.display = 'none';
             methodContainer.style.display = 'block';
             licenseUrlContainer.style.display = 'block';
+            testStreamButton.style.display = 'block';
         }
+    }
+
+    function handleTestStream() {
+        const drmMethod = document.getElementById('drmMethod').value;
+        const urlInput = document.getElementById('url');
+        const licenseUrlInput = document.getElementById('licenseUrl');
+
+        const manifestUrl = 'https://cdn.bitmovin.com/content/assets/art-of-motion_drm/mpds/11331.mpd';
+        let licenseUrl = '';
+
+        if (drmMethod === 'widevine') {
+            licenseUrl = 'https://cwip-shaka-proxy.appspot.com/no_auth';
+        } else if (drmMethod === 'playready') {
+            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw==';
+        }
+
+        urlInput.value = manifestUrl;
+        licenseUrlInput.value = licenseUrl;
     }
 
     async function initPlayer() {
@@ -171,12 +198,10 @@
         window.player = player;
         window.ui = ui;
 
-        // Wczytaj wartości z formularza
         const urlInput = document.getElementById('url');
         const drmType = document.getElementById('drmType').value;
         const url = urlInput.value;
 
-        // Konfiguracja DRM zależna od wybranego typu
         if (drmType === 'clearkey') {
             const clearKeysInput = document.getElementById('clearKeys').value;
             const clearKeys = parseClearKeys(clearKeysInput);
@@ -186,11 +211,9 @@
                 }
             });
         } else {
-            // Licencja
             const drmMethod = document.getElementById('drmMethod').value;
             const licenseUrl = document.getElementById('licenseUrl').value;
 
-            // W zależności od metody:
             if (drmMethod === 'widevine') {
                 player.configure({
                     drm: {
@@ -210,14 +233,12 @@
             }
         }
 
-        // Ładowanie wybranego manifestu
         await player.load(url);
         player.play();
     }
 
     function parseClearKeys(clearKeysStr) {
         const clearKeys = {};
-        // Zamieniamy nowe linie na przecinki i rozbijamy po przecinkach
         const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
         keyPairs.forEach(pair => {
             const [kid, key] = pair.split(':');
@@ -228,7 +249,6 @@
         return clearKeys;
     }
 
-    // Obsługa submita formularza (sprawdzanie ?decryption_key=... itp.)
     function handleFormSubmit(event) {
         event.preventDefault();
         const urlValue = document.getElementById("url").value;
@@ -248,7 +268,6 @@
             const clearKeys = parts[1];
 
             document.getElementById("url").value = url;
-            // Ustawiamy typ na clearkey i przełączamy widoki
             document.getElementById("drmType").value = 'clearkey';
             handleDrmTypeChange();
             document.getElementById("clearKeys").value = clearKeys;
