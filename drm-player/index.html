@@ -52,9 +52,10 @@
             width: 100%;
             height: 100vh;
         }
+        /* Zmieniam kolor przycisku .btn-primary na bardziej "niebieski", jeśli chcesz */
         .btn-primary {
-            background-color: #333;
-            border-color: #555;
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
         }
     </style>
 </head>
@@ -109,21 +110,31 @@
                 >
             </div>
 
-            <div class="mb-3">
+            <!--
+              Zmiana kolejności i dodanie kontenera .text-center oraz w-100 
+              dla pełnej szerokości przycisków
+            -->
+            <div class="mb-3 text-center">
+                <input
+                    type="submit"
+                    class="btn btn-primary w-100 mb-2"
+                    value="Play"
+                >
+            </div>
+
+            <div class="mb-3 text-center" style="display: none;" id="testStreamContainer">
                 <button
                     type="button"
                     id="testStreamButton"
-                    class="btn btn-secondary"
-                    style="display: none;"
+                    class="btn btn-secondary w-100 mb-2"
                 >Wanna play a Test Stream? Click me!</button>
             </div>
 
-            <div class="mb-3">
-                <input
-                    type="submit"
-                    class="btn btn-primary"
-                    value="Play"
-                >
+            <!-- Go back to / -->
+            <div class="mb-3 text-center">
+                <a href="https://irylek.github.io/" class="btn btn-secondary w-100">
+                    Go back to /
+                </a>
             </div>
         </form>
     </div>
@@ -215,18 +226,21 @@
         const keysContainer = document.getElementById('keysContainer');
         const methodContainer = document.getElementById('methodContainer');
         const licenseUrlContainer = document.getElementById('licenseUrlContainer');
-        const testStreamButton = document.getElementById('testStreamButton');
+
+        // Nowy element do sterowania widocznością kontenera z testowym przyciskiem
+        const testStreamContainer = document.getElementById('testStreamContainer');
 
         if (drmType === 'clearkey') {
             keysContainer.style.display = 'block';
             methodContainer.style.display = 'none';
             licenseUrlContainer.style.display = 'none';
-            testStreamButton.style.display = 'none';
+            testStreamContainer.style.display = 'none';
         } else {
+            // license = widevine albo playready
             keysContainer.style.display = 'none';
             methodContainer.style.display = 'block';
             licenseUrlContainer.style.display = 'block';
-            testStreamButton.style.display = 'block';
+            testStreamContainer.style.display = 'block';
         }
     }
 
