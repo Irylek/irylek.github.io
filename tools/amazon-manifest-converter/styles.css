@@ -21,14 +21,14 @@ body {
     position: relative;
 }
 
-/* Top Bar Styling */
+/* Centered Top Bar Styling */
 .top-bar {
     margin-bottom: 20px;
-    text-align: left;
+    text-align: center;
 }
 
 .back-link {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
