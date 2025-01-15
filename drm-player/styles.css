@@ -21,7 +21,7 @@ body::before {
   height: 100%;
   background: url("https://thinkdox.com/wp-content/uploads/2023/11/Beige-Gray-Clean-Aesthetic-Photo-Collage-YouTube-Banner-500-x-1000-px-2.jpg")
               center center / cover no-repeat;
-  opacity: 0.2;    /* 20% opacity on the image */
+  opacity: 0.4;    /* 40% opacity on the image */
   z-index: -1;     /* Make sure it’s behind everything */
 }
 
