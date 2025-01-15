@@ -1,45 +1,61 @@
-/* ----- General Page Styles ----- */
+/* ----- 1) Full-Page Background with 20% Opacity ----- */
 body {
   margin: 0;
   padding: 0;
-  /* Dark gradient background for a nice, cinematic feel */
-  background: linear-gradient(135deg, #000000, #1b1b1b);
-  font-family: 'Roboto', sans-serif; /* You can swap with any Google Font */
+  font-family: 'Roboto', sans-serif; /* or any other font */
   color: #fff;
-}
+  background-color: #000; /* Fallback color if image fails to load */
 
-/* Container for the entire page */
-#container {
-  width: 100%;
-  height: 100vh;
-  display: flex;
+  /* We’ll use a pseudo-element to show the background image 
+     at 20% opacity without affecting other elements. */
+  position: relative;
   overflow: hidden;
 }
 
-/* ----- Settings Panel ----- */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("https://thinkdox.com/wp-content/uploads/2023/11/Beige-Gray-Clean-Aesthetic-Photo-Collage-YouTube-Banner-500-x-1000-px-2.jpg")
+              center center / cover no-repeat;
+  opacity: 0.2;    /* 20% opacity on the image */
+  z-index: -1;     /* Make sure it’s behind everything */
+}
+
+/* ----- 2) Overall Page Container ----- */
+#container {
+  display: flex;        /* Lay out the player and settings side by side */
+  width: 100%;
+  height: 100vh;
+}
+
+/* ----- 3) Settings Panel on the Right ----- */
 #settings {
-  width: 400px; /* Reduced width a bit for a nicer ratio */
-  background-color: #111;
+  width: 400px;
+  background-color: rgba(17, 17, 17, 0.9); /* Slightly transparent black, if you like */
   padding: 30px;
-  box-shadow: -6px 0 8px rgba(0, 0, 0, 0.6); /* Subtle left shadow */
-  z-index: 10; /* Make sure it stays on top */
+  box-shadow: -6px 0 8px rgba(0, 0, 0, 0.6);
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-/* Labels */
+/* Label styling */
 .form-label {
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-/* Inputs and textareas */
+/* Inputs & textareas */
 .form-control {
   font-size: 0.875rem;
   background-color: #222;
   color: #fff;
-  border: 1px solid #444; /* Thinner border for a modern look */
+  border: 1px solid #444;
   border-radius: 4px;
   margin-bottom: 1rem;
   transition: border-color 0.3s;
@@ -47,10 +63,10 @@ body {
 
 .form-control:focus {
   outline: none;
-  border-color: #0d6efd; /* Match primary button color on focus */
+  border-color: #0d6efd;
 }
 
-/* Submit & other Buttons */
+/* Buttons */
 .btn {
   border-radius: 4px;
   font-size: 0.875rem;
@@ -68,13 +84,13 @@ body {
   transform: translateY(0);
 }
 
-/* Primary (Play) button */
+/* Play button (primary) */
 .btn-primary {
   background-color: #0d6efd !important;
   border-color: #0d6efd !important;
 }
 
-/* Secondary (Back/Test Stream) buttons */
+/* Secondary buttons */
 .btn-secondary {
   background-color: #666 !important;
   border-color: #666 !important;
@@ -85,9 +101,9 @@ body {
   border-color: #555 !important;
 }
 
-/* ----- Player Container ----- */
+/* ----- 4) Player Area (takes up remaining space on the left) ----- */
 #player {
-  flex: 1; /* Take the remaining width */
+  flex: 1;
   position: relative;
   background-color: #000;
   display: flex;
@@ -95,14 +111,14 @@ body {
   justify-content: center;
 }
 
-/* The video should fill all available space while maintaining aspect ratio */
+/* Fill the space while maintaining aspect ratio */
 video {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Nicely cover the area */
+  object-fit: cover;
 }
 
-/* ----- Optional: Tweak the Shaka Player UI’s default controls if you like ----- */
+/* Optional: Shaka player controls style */
 .shaka-controls-container {
   background: rgba(0, 0, 0, 0.4);
 }
