@@ -15,7 +15,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         header {
@@ -33,6 +33,7 @@
 
         main {
             text-align: center;
+            max-width: 800px;
         }
 
         section {
@@ -42,11 +43,16 @@
         h2 {
             color: #f0f0f0;
             margin-bottom: 1rem;
+            font-size: 2rem;
         }
 
         p {
             margin: 0.5rem 0;
-            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        div {
+            margin-bottom: 1.5rem;
         }
 
         code {
@@ -92,18 +98,15 @@
     <main>
         <section id="crypto-support">
             <h2>Support us</h2>
-            <p>Hi guys! I guess you are in this page, because you want to support me. Thank you so much. I run this service ad-free. I literally earn no money from it, so DRM stuff would be easier to solve. Any price greatly appreciated! Even 1$ dollar!</p>
+            <p>Hi guys! I guess you are on this page because you want to support me. Thank you so much. I run this service ad-free. I literally earn no money from it. I make tools for you guys, so DRM stuff would be easier to solve. Any price is greatly appreciated! Even $1!</p>
             <div>
                 <h3>Bitcoin</h3>
-                <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png" alt="Bitcoin logo" style="width:50px; height:50px;">
                 <p>Wallet Address: <code id="btc-wallet">bc1qcmjxv89624vmwzu4lxrld4t7qg50eaxff3ccxv</code>
                     <button id="btc-button" onclick="copyToClipboard('btc-wallet', 'btc-button')">Copy</button>
                 </p>
             </div>
             <div>
                 <h3>USDT (TRC20)</h3>
-                <img src="https://assets-cdn.trustwallet.com/blockchains/tron/assets/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t/logo.png" alt="USDT logo" style="width:50px; height:50px;">
-                <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/info/logo.png" alt="Tron logo" style="width:50px; height:50px; margin-left:10px;">
                 <p>Wallet Address: <code id="usdt-wallet">TWpSrmffF6YMw68WSVRqkqiAA8p65oj5Yp</code>
                     <button id="usdt-button" onclick="copyToClipboard('usdt-wallet', 'usdt-button')">Copy</button>
                 </p>
