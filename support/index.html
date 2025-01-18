@@ -88,6 +88,23 @@
             color: #aaaaaa;
             width: 100%;
         }
+
+        .back-button {
+            margin-top: 1rem;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -97,8 +114,7 @@
 
     <main>
         <section id="crypto-support">
-            <h2>Support us</h2>
-            <p>Hi guys! I guess you are on this page because you want to support me. Thank you so much. I run this service ad-free. I literally earn no money from it. I make tools for you guys, so DRM stuff would be easier to solve. Any price is greatly appreciated! Even $1!</p>
+            <p>Hi guys! I guess you are on this page because you want to support me. Thank you so much. I run this service ad-free. I literally earn no money from it, so DRM stuff would be easier to solve. Any price is greatly appreciated! Even $1!</p>
             <div>
                 <h3>Bitcoin</h3>
                 <p>Wallet Address: <code id="btc-wallet">bc1qcmjxv89624vmwzu4lxrld4t7qg50eaxff3ccxv</code>
@@ -112,10 +128,11 @@
                 </p>
             </div>
         </section>
+        <a class="back-button" href="https://irylek.github.io/">Go back to /</a>
     </main>
 
     <footer>
-        This site is for educational purposes only. Do not download content without consent.
+        <p>This site is for educational purposes only. Do not download content without consent.</p>
     </footer>
 
     <script>
