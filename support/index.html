@@ -71,6 +71,11 @@
             background-color: #555;
         }
 
+        .copied {
+            background-color: #28a745 !important;
+            color: #fff;
+        }
+
         footer {
             text-align: center;
             padding: 1rem;
@@ -94,7 +99,7 @@
                 <h3>Bitcoin</h3>
                 <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png" alt="Bitcoin logo" style="width:50px; height:50px;">
                 <p>Wallet Address: <code id="btc-wallet">bc1qcmjxv89624vmwzu4lxrld4t7qg50eaxff3ccxv</code>
-                    <button onclick="copyToClipboard('btc-wallet')">✅</button>
+                    <button id="btc-button" onclick="copyToClipboard('btc-wallet', 'btc-button')">Copy</button>
                 </p>
             </div>
             <div>
@@ -102,21 +107,27 @@
                 <img src="https://assets-cdn.trustwallet.com/blockchains/tron/assets/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t/logo.png" alt="USDT logo" style="width:50px; height:50px;">
                 <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/info/logo.png" alt="Tron logo" style="width:50px; height:50px; margin-left:10px;">
                 <p>Wallet Address: <code id="usdt-wallet">TWpSrmffF6YMw68WSVRqkqiAA8p65oj5Yp</code>
-                    <button onclick="copyToClipboard('usdt-wallet')">✅</button>
+                    <button id="usdt-button" onclick="copyToClipboard('usdt-wallet', 'usdt-button')">Copy</button>
                 </p>
             </div>
         </section>
     </main>
 
     <footer>
-        &copy; 2025 Support Inc. All rights reserved.
+        This site is for educational purposes only. Do not download content without consent.
     </footer>
 
     <script>
-        function copyToClipboard(elementId) {
+        function copyToClipboard(elementId, buttonId) {
             const text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
+                const button = document.getElementById(buttonId);
+                button.innerText = '✅';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
             });
