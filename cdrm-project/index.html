@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDRM-Project Cached Keys</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="https://irylek.github.io/tools" class="back-link">Go back to tools/</a>
+        </div>
+
+        <h1>CDRM-Project Cached Keys</h1>
+        <p>Enter your PSSH to check if there are any cached keys from CDRM-Project.</p>
+        <textarea id="inputPSSH" placeholder="Enter your PSSH here..."></textarea>
+        <br>
+        <button onclick="sendPSSH()">Send</button>
+        <div id="output">
+            <button id="copyButton" style="display: none;" onclick="copyToClipboard()">Copy</button>
+            <pre id="outputText"></pre>
+        </div>
+    </div>
+</body>
+</html>
