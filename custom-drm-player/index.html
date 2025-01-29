@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Custom DRM Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/controls.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video id="video" autoplay controls class="shaka-video"></video>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!shaka.Player.isBrowserSupported()) {
+                console.error('Shaka Player is not supported in this browser.');
+                return;
+            }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const base64Param = urlParams.get('a');
+            if (!base64Param) {
+                console.error('No DRM configuration provided in URL parameters.');
+                return;
+            }
+
+            try {
+                const params = JSON.parse(atob(base64Param));
+                document.title = params.title || 'Shaka DRM Player';
+                
+                const video = document.getElementById('video');
+                const player = new shaka.Player(video);
+                
+                if (params.drmType === 'clearkey' && params.clearKeys) {
+                    let formattedKeys = {};
+                    for (const key in params.clearKeys) {
+                        formattedKeys[params.clearKeys[key].KID] = params.clearKeys[key].KEY;
+                    }
+                    player.configure({ drm: { clearKeys: formattedKeys } });
+                } else if (params.drmType === 'widevine' && params.licenseUrl) {
+                    player.configure({ drm: { servers: { 'com.widevine.alpha': params.licenseUrl } } });
+                } else if (params.drmType === 'playready' && params.licenseUrl) {
+                    player.configure({ drm: { servers: { 'com.microsoft.playready': params.licenseUrl } } });
+                }
+                
+                await player.load(params.url);
+                video.play();
+            } catch (error) {
+                console.error('Error loading DRM configuration:', error);
+            }
+        });
+    </script>
+</body>
+</html>
