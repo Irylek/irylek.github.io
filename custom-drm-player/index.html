@@ -31,24 +31,35 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
-        video, #player-container {
+        .shaka-video-container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .shaka-video-container video {
             width: 100%;
             height: 100%;
         }
-        .shaka-video-container {
-            position: absolute;
+        #clappr-container {
             width: 100vw;
             height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="shaka-container" class="shaka-video-container">
-            <video id="shaka-video" autoplay controls class="shaka-video"></video>
+            <video id="shaka-video" class="shaka-video" autoplay controls></video>
         </div>
-        <div id="clappr-container" style="display:none;"></div>
+        <div id="clappr-container"></div>
     </div>
     
     <script>
