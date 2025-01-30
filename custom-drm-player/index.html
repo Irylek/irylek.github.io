@@ -30,11 +30,16 @@
             width: 100%;
             height: auto;
         }
+        .shaka-video-container {
+            position: relative;
+            max-width: 800px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="shaka-container">
+        <div id="shaka-container" class="shaka-video-container">
             <video id="shaka-video" autoplay controls class="shaka-video"></video>
         </div>
         <div id="clappr-container" style="display:none;"></div>
@@ -58,21 +63,22 @@
                 const clapprContainer = document.getElementById('clappr-container');
                 
                 if (shaka.Player.isBrowserSupported()) {
-                    const player = new shaka.Player(video);
+                    const player = new shaka.ui.Overlay(new shaka.Player(video), shakaContainer, video);
+                    player.getControls();
                     
                     if (params.drmType === 'clearkey' && params.clearKeys) {
                         let formattedKeys = {};
                         for (const key in params.clearKeys) {
                             formattedKeys[params.clearKeys[key].KID] = params.clearKeys[key].KEY;
                         }
-                        player.configure({ drm: { clearKeys: formattedKeys } });
+                        player.getPlayer().configure({ drm: { clearKeys: formattedKeys } });
                     } else if (params.drmType === 'widevine' && params.licenseUrl) {
-                        player.configure({ drm: { servers: { 'com.widevine.alpha': params.licenseUrl } } });
+                        player.getPlayer().configure({ drm: { servers: { 'com.widevine.alpha': params.licenseUrl } } });
                     } else if (params.drmType === 'playready' && params.licenseUrl) {
-                        player.configure({ drm: { servers: { 'com.microsoft.playready': params.licenseUrl } } });
+                        player.getPlayer().configure({ drm: { servers: { 'com.microsoft.playready': params.licenseUrl } } });
                     }
                     
-                    await player.load(params.url);
+                    await player.getPlayer().load(params.url);
                     video.play();
                 } else {
                     console.warn('Shaka Player not supported, switching to Clappr.');
