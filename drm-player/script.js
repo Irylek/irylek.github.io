@@ -71,33 +71,29 @@ const widevineConfigs = [{
         playButton.disabled = !isValid;
     }
 
-    function handleDrmTypeChange() {
-        const drmType = drmTypeSelect.value;
-        const keysContainer = document.getElementById('keysContainer');
-        const methodContainer = document.getElementById('methodContainer');
-        const headersContainer = document.getElementById('headersContainer');
-        const licenseUrlContainer = document.getElementById('licenseUrlContainer');
-        const testStreamContainer = document.getElementById('testStreamContainer');
+function handleDrmTypeChange() {
+    const drmType = drmTypeSelect.value;
+    const keysContainer = document.getElementById('keysContainer');
+    const methodContainer = document.getElementById('methodContainer');
+    const licenseUrlContainer = document.getElementById('licenseUrlContainer');
+    const headersContainerKeys = document.getElementById('headersContainerKeys');
+    const headersContainerLicense = document.getElementById('headersContainerLicense');
 
-        if (drmType === 'clearkey') {
-            keysContainer.style.display = 'block';
-            methodContainer.style.display = 'none';
-            headersContainer.style.display = 'none';
-            licenseUrlContainer.style.display = 'none';
-            testStreamContainer.style.display = 'none';
-
-            drmMethodSelect.value = '';
-            licenseUrlInput.value = '';
-
-        } else {
-            keysContainer.style.display = 'none';
-            methodContainer.style.display = 'block';
-            licenseUrlContainer.style.display = 'block';
-            testStreamContainer.style.display = 'block';
-            headersContainer.style.display = 'block';
-        }
-        validateInputs();
+    if (drmType === 'clearkey') {
+        keysContainer.style.display = 'block';
+        methodContainer.style.display = 'none';
+        licenseUrlContainer.style.display = 'none';
+        headersContainerKeys.style.display = 'block';
+        headersContainerLicense.style.display = 'none';
+    } else {
+        keysContainer.style.display = 'none';
+        methodContainer.style.display = 'block';
+        licenseUrlContainer.style.display = 'block';
+        headersContainerKeys.style.display = 'none';
+        headersContainerLicense.style.display = 'block';
     }
+    validateInputs();
+}
 
     function handleTestStream() {
         const drmMethod = drmMethodSelect.value;
@@ -128,11 +124,13 @@ async function initPlayer() {
 
     const drmType = drmTypeSelect.value;
     const url = urlInput.value;
-    const headersInput = document.getElementById('headers');
-    let headers = {};
 
+    let headers = {};
     try {
-        headers = JSON.parse(headersInput.value.trim() || "{}");
+        const headersInput = drmType === 'clearkey'
+            ? document.getElementById('headersKeys').value.trim()
+            : document.getElementById('headersLicense').value.trim();
+        headers = JSON.parse(headersInput || "{}");
     } catch (error) {
         console.error("Invalid JSON in headers field:", error);
     }
@@ -141,7 +139,12 @@ async function initPlayer() {
         const clearKeys = parseClearKeys(clearKeysText.value);
         player.configure({
             drm: {
-                clearKeys: clearKeys
+                clearKeys: clearKeys,
+                advanced: {
+                    'org.w3.clearkey': {
+                        requestHeaders: headers
+                    }
+                }
             }
         });
     } else {
@@ -157,9 +160,6 @@ async function initPlayer() {
             if (Object.keys(headers).length > 0) {
                 drmConfig.advanced = {};
                 drmConfig.advanced[drmMethod === 'widevine' ? 'com.widevine.alpha' : 'com.microsoft.playready'] = {
-                    serverCertificate: null,
-                    videoRobustness: 'SW_SECURE_CRYPTO',
-                    audioRobustness: 'SW_SECURE_CRYPTO',
                     requestHeaders: headers
                 };
             }
