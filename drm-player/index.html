@@ -23,12 +23,7 @@
             <!-- Manifest -->
             <div class="mb-3">
                 <label for="url" class="form-label">Manifest:</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="url"
-                    placeholder="https://example.com/manifest.mpd"
-                >
+                <input type="text" class="form-control" id="url" placeholder="https://example.com/manifest.mpd">
             </div>
 
             <!-- DRM Type -->
@@ -40,29 +35,19 @@
                 </select>
             </div>
 
-            <!-- ClearKeys container -->
+            <!-- ClearKeys -->
             <div class="mb-3" id="keysContainer">
                 <label for="clearKeys" class="form-label">Keys (Multiple Supported!):</label>
-                <textarea
-                    class="form-control"
-                    id="clearKeys"
-                    rows="8"
-                    placeholder="00000000000000000000000000000000:00000000000000000000000000000000"
-                ></textarea>
+                <textarea class="form-control" id="clearKeys" rows="8" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
             </div>
 
             <!-- Headers (for ClearKeys) -->
             <div class="mb-3" id="headersContainerKeys" style="display: none;">
                 <label for="headersKeys" class="form-label">Headers (JSON format):</label>
-                <textarea
-                    class="form-control"
-                    id="headersKeys"
-                    rows="4"
-                    placeholder='{"Authorization": "Bearer your-token"}'
-                ></textarea>
+                <textarea class="form-control" id="headersKeys" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
             </div>
 
-            <!-- DRM Method (widevine/playready) -->
+            <!-- DRM Method -->
             <div class="mb-3" id="methodContainer" style="display: none;">
                 <label for="drmMethod" class="form-label">Method:</label>
                 <select id="drmMethod" class="form-control">
@@ -75,43 +60,29 @@
             <!-- License URL -->
             <div class="mb-3" id="licenseUrlContainer" style="display: none;">
                 <label for="licenseUrl" class="form-label">License URL:</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="licenseUrl"
-                    placeholder="https://example.com/drm/AcquireLicense"
-                >
+                <input type="text" class="form-control" id="licenseUrl" placeholder="https://example.com/drm/AcquireLicense">
             </div>
 
             <!-- Headers (for License URL) -->
             <div class="mb-3" id="headersContainerLicense" style="display: none;">
                 <label for="headersLicense" class="form-label">Headers (JSON format):</label>
-                <textarea
-                    class="form-control"
-                    id="headersLicense"
-                    rows="4"
-                    placeholder='{"Authorization": "Bearer your-token"}'
-                ></textarea>
+                <textarea class="form-control" id="headersLicense" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
             </div>
 
             <!-- PLAY button -->
             <div class="mb-3 text-center">
-                <input
-                    type="submit"
-                    class="btn btn-primary w-100 mb-2"
-                    value="Play"
-                    disabled
-                    id="playButton"
-                >
+                <input type="submit" class="btn btn-primary w-100 mb-2" value="Play" disabled id="playButton">
             </div>
+
+            <!-- Go back to / -->
+            <div class="mb-3 text-center">
+                <a href="https://irylek.github.io/" class="btn btn-secondary w-100">Go back to /</a>
+            </div>
+
         </form>
     </div>
 
-    <div
-        data-shaka-player-container
-        id="player"
-        data-shaka-player-cast-receiver-id="1BA79154"
-    >
+    <div data-shaka-player-container id="player" data-shaka-player-cast-receiver-id="1BA79154">
         <video data-shaka-player id="video" autoplay crossorigin="anonymous"></video>
     </div>
 </div>
