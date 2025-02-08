@@ -75,12 +75,14 @@ const widevineConfigs = [{
         const drmType = drmTypeSelect.value;
         const keysContainer = document.getElementById('keysContainer');
         const methodContainer = document.getElementById('methodContainer');
+        const headersContainer = document.getElementById('headersContainer');
         const licenseUrlContainer = document.getElementById('licenseUrlContainer');
         const testStreamContainer = document.getElementById('testStreamContainer');
 
         if (drmType === 'clearkey') {
             keysContainer.style.display = 'block';
             methodContainer.style.display = 'none';
+            headersContainer.style.display = 'none';
             licenseUrlContainer.style.display = 'none';
             testStreamContainer.style.display = 'none';
 
@@ -92,6 +94,7 @@ const widevineConfigs = [{
             methodContainer.style.display = 'block';
             licenseUrlContainer.style.display = 'block';
             testStreamContainer.style.display = 'block';
+            headersContainer.style.display = 'block';
         }
         validateInputs();
     }
@@ -114,51 +117,60 @@ const widevineConfigs = [{
         validateInputs();
     }
 
-    async function initPlayer() {
-        const video = document.getElementById('video');
-        const ui = video['ui'];
-        const controls = ui.getControls();
-        const player = controls.getPlayer();
+async function initPlayer() {
+    const video = document.getElementById('video');
+    const ui = video['ui'];
+    const controls = ui.getControls();
+    const player = controls.getPlayer();
 
-        window.player = player;
-        window.ui = ui;
+    window.player = player;
+    window.ui = ui;
 
-        const drmType = drmTypeSelect.value;
-        const url = urlInput.value;
+    const drmType = drmTypeSelect.value;
+    const url = urlInput.value;
+    const headersInput = document.getElementById('headers');
+    let headers = {};
 
-        if (drmType === 'clearkey') {
-            const clearKeys = parseClearKeys(clearKeysText.value);
-            player.configure({
-                drm: {
-                    clearKeys: clearKeys
-                }
-            });
-        } else {
-            const drmMethod = drmMethodSelect.value;
-            const licenseUrl = licenseUrlInput.value;
-
-            if (drmMethod === 'widevine') {
-                player.configure({
-                    drm: {
-                        servers: {
-                            'com.widevine.alpha': licenseUrl
-                        }
-                    }
-                });
-            } else if (drmMethod === 'playready') {
-                player.configure({
-                    drm: {
-                        servers: {
-                            'com.microsoft.playready': licenseUrl
-                        }
-                    }
-                });
-            }
-        }
-
-        await player.load(url);
-        player.play();
+    try {
+        headers = JSON.parse(headersInput.value.trim() || "{}");
+    } catch (error) {
+        console.error("Invalid JSON in headers field:", error);
     }
+
+    if (drmType === 'clearkey') {
+        const clearKeys = parseClearKeys(clearKeysText.value);
+        player.configure({
+            drm: {
+                clearKeys: clearKeys
+            }
+        });
+    } else {
+        const drmMethod = drmMethodSelect.value;
+        const licenseUrl = licenseUrlInput.value;
+
+        if (drmMethod === 'widevine' || drmMethod === 'playready') {
+            const drmConfig = {
+                servers: {}
+            };
+            drmConfig.servers[drmMethod === 'widevine' ? 'com.widevine.alpha' : 'com.microsoft.playready'] = licenseUrl;
+
+            if (Object.keys(headers).length > 0) {
+                drmConfig.advanced = {};
+                drmConfig.advanced[drmMethod === 'widevine' ? 'com.widevine.alpha' : 'com.microsoft.playready'] = {
+                    serverCertificate: null,
+                    videoRobustness: 'SW_SECURE_CRYPTO',
+                    audioRobustness: 'SW_SECURE_CRYPTO',
+                    requestHeaders: headers
+                };
+            }
+
+            player.configure({ drm: drmConfig });
+        }
+    }
+
+    await player.load(url);
+    player.play();
+}
 
     function parseClearKeys(clearKeysStr) {
         const clearKeys = {};
