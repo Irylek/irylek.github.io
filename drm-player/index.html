@@ -51,6 +51,18 @@
                 ></textarea>
             </div>
 
+            <!-- Headers (for authorization or custom headers) -->
+<div class="mb-3" id="headersContainer" style="display: none;">
+    <label for="headers" class="form-label">Headers (JSON format):</label>
+    <textarea
+        class="form-control"
+        id="headers"
+        rows="4"
+        placeholder='{"Authorization": "Bearer your-token"}'
+    ></textarea>
+</div>
+
+
             <!-- DRM Method (widevine/playready) -->
             <div class="mb-3" id="methodContainer" style="display: none;">
                 <label for="drmMethod" class="form-label">Method:</label>
