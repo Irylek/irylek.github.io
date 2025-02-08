@@ -1,75 +1,63 @@
-const widevineConfigs = [{
-        initDataTypes: ['cenc'],
-        videoCapabilities: [
-            { contentType: 'video/mp4; codecs="avc1.42E01E"' }
-        ],
-        audioCapabilities: [
-            { contentType: 'audio/mp4; codecs="mp4a.40.2"' }
-        ]
-    }];
+let drmTypeSelect, drmMethodSelect, urlInput, clearKeysText, licenseUrlInput, playButton;
 
-    const playreadyConfigs = [{
-        initDataTypes: ['cenc'],
-        videoCapabilities: [
-            { contentType: 'video/mp4; codecs="avc1.42E01E"' }
-        ],
-        audioCapabilities: [
-            { contentType: 'audio/mp4; codecs="mp4a.40.2"' }
-        ]
-    }];
+async function detectDRMSupport() {
+    const widevineOption = drmMethodSelect.querySelector('option[value="widevine"]');
+    const playreadyOption = drmMethodSelect.querySelector('option[value="playready"]');
 
-    let drmTypeSelect, drmMethodSelect, urlInput, clearKeysText, licenseUrlInput, playButton;
+    let widevineText = 'Widevine';
+    let playreadyText = 'PlayReady';
 
-    async function detectDRMSupport() {
-        const widevineOption = drmMethodSelect.querySelector('option[value="widevine"]');
-        const playreadyOption = drmMethodSelect.querySelector('option[value="playready"]');
-
-        let widevineText = 'Widevine';
-        let playreadyText = 'PlayReady';
-
-        try {
-            await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineConfigs);
-        } catch (err) {
-            widevineText += ' (Your browser does not support that)';
-            widevineOption.disabled = true;
-        }
-
-        try {
-            await navigator.requestMediaKeySystemAccess('com.microsoft.playready', playreadyConfigs);
-        } catch (err) {
-            playreadyText += ' (Your browser does not support that)';
-            playreadyOption.disabled = true;
-        }
-
-        widevineOption.textContent = widevineText;
-        playreadyOption.textContent = playreadyText;
+    try {
+        await navigator.requestMediaKeySystemAccess('com.widevine.alpha', [{
+            initDataTypes: ['cenc'],
+            videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
+            audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
+        }]);
+    } catch (err) {
+        widevineText += ' (Not supported)';
+        widevineOption.disabled = true;
     }
 
-    function validateInputs() {
-        const drmType = drmTypeSelect.value.trim();
-        const urlVal = urlInput.value.trim();
-        const clearKeysVal = clearKeysText.value.trim();
-        const drmMethodVal = drmMethodSelect.value.trim();
-        const licenseUrlVal = licenseUrlInput.value.trim();
-
-        let isValid = false;
-
-        if (drmType === 'clearkey') {
-            isValid = (urlVal !== '' && clearKeysVal !== '');
-        } else {
-            const selectedOption = drmMethodSelect.querySelector('option:checked');
-            const isOptionDisabled = selectedOption ? selectedOption.disabled : false;
-
-            isValid = (
-                drmMethodVal !== '' &&
-                !isOptionDisabled &&
-                urlVal !== '' &&
-                licenseUrlVal !== ''
-            );
-        }
-
-        playButton.disabled = !isValid;
+    try {
+        await navigator.requestMediaKeySystemAccess('com.microsoft.playready', [{
+            initDataTypes: ['cenc'],
+            videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }],
+            audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }]
+        }]);
+    } catch (err) {
+        playreadyText += ' (Not supported)';
+        playreadyOption.disabled = true;
     }
+
+    widevineOption.textContent = widevineText;
+    playreadyOption.textContent = playreadyText;
+}
+
+function validateInputs() {
+    const drmType = drmTypeSelect.value.trim();
+    const urlVal = urlInput.value.trim();
+    const clearKeysVal = clearKeysText.value.trim();
+    const drmMethodVal = drmMethodSelect.value.trim();
+    const licenseUrlVal = licenseUrlInput.value.trim();
+
+    let isValid = false;
+
+    if (drmType === 'clearkey') {
+        isValid = (urlVal !== '' && clearKeysVal !== '');
+    } else {
+        const selectedOption = drmMethodSelect.querySelector('option:checked');
+        const isOptionDisabled = selectedOption ? selectedOption.disabled : false;
+
+        isValid = (
+            drmMethodVal !== '' &&
+            !isOptionDisabled &&
+            urlVal !== '' &&
+            licenseUrlVal !== ''
+        );
+    }
+
+    playButton.disabled = !isValid;
+}
 
 function handleDrmTypeChange() {
     const drmType = drmTypeSelect.value;
@@ -79,7 +67,7 @@ function handleDrmTypeChange() {
     const headersContainerKeys = document.getElementById('headersContainerKeys');
     const headersContainerLicense = document.getElementById('headersContainerLicense');
 
-    // Reset display first
+    // Reset UI state
     keysContainer.style.display = 'none';
     methodContainer.style.display = 'none';
     licenseUrlContainer.style.display = 'none';
@@ -98,23 +86,19 @@ function handleDrmTypeChange() {
     validateInputs();
 }
 
-    function handleTestStream() {
-        const drmMethod = drmMethodSelect.value;
-        let manifestUrl = '';
-        let licenseUrl = '';
+function parseClearKeys(clearKeysStr) {
+    const clearKeys = {};
+    const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
 
-        if (drmMethod === 'widevine') {
-            manifestUrl = 'https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_uhd.mpd';
-            licenseUrl = 'https://proxy.staging.widevine.com/proxy';
-        } else if (drmMethod === 'playready') {
-            manifestUrl = 'https://test.playready.microsoft.com/media/profficialsite/tearsofsteel_4k.ism/manifest.mpd';
-            licenseUrl = 'https://test.playready.microsoft.com/service/rightsmanager.asmx?cfg=(persist:false,sl:150)';
+    keyPairs.forEach(pair => {
+        const [kid, key] = pair.split(':');
+        if (kid && key) {
+            clearKeys[kid.trim()] = key.trim();
         }
-        urlInput.value = manifestUrl;
-        licenseUrlInput.value = licenseUrl;
+    });
 
-        validateInputs();
-    }
+    return clearKeys;
+}
 
 async function initPlayer() {
     const video = document.getElementById('video');
@@ -155,9 +139,7 @@ async function initPlayer() {
         const licenseUrl = licenseUrlInput.value;
 
         if (drmMethod === 'widevine' || drmMethod === 'playready') {
-            const drmConfig = {
-                servers: {}
-            };
+            const drmConfig = { servers: {} };
             drmConfig.servers[drmMethod === 'widevine' ? 'com.widevine.alpha' : 'com.microsoft.playready'] = licenseUrl;
 
             if (Object.keys(headers).length > 0) {
@@ -175,75 +157,59 @@ async function initPlayer() {
     player.play();
 }
 
-    function parseClearKeys(clearKeysStr) {
-        const clearKeys = {};
-        const keyPairs = clearKeysStr.trim().replace(/\n/g, ',').split(',');
-        keyPairs.forEach(pair => {
-            const [kid, key] = pair.split(':');
-            if (kid && key) {
-                clearKeys[kid.trim()] = key.trim();
-            }
-        });
-        return clearKeys;
+function handleFormSubmit(event) {
+    event.preventDefault();
+    if (playButton.disabled) {
+        return;
     }
 
-    function handleFormSubmit(event) {
-        event.preventDefault();
-        if (playButton.disabled) {
-            return;
-        }
+    const urlValue = urlInput.value;
 
-        const urlValue = urlInput.value;
+    if (
+        urlValue.includes("?decryption_key=") ||
+        urlValue.includes("&decryption_key=") ||
+        urlValue.includes("@")
+    ) {
+        const separator = urlValue.includes("?decryption_key=")
+            ? "?decryption_key="
+            : (urlValue.includes("&decryption_key=")
+                ? "&decryption_key="
+                : "@");
+        const parts = urlValue.split(separator);
+        const url = parts[0];
+        const clearKeys = parts[1];
 
-        if (
-            urlValue.includes("?decryption_key=") ||
-            urlValue.includes("&decryption_key=") ||
-            urlValue.includes("@")
-        ) {
-            const separator = urlValue.includes("?decryption_key=")
-                ? "?decryption_key="
-                : (urlValue.includes("&decryption_key=")
-                    ? "&decryption_key="
-                    : "@");
-            const parts = urlValue.split(separator);
-            const url = parts[0];
-            const clearKeys = parts[1];
-
-            urlInput.value = url;
-            drmTypeSelect.value = 'clearkey';
-            handleDrmTypeChange();
-            clearKeysText.value = clearKeys;
-        }
-
-        initPlayer();
+        urlInput.value = url;
+        drmTypeSelect.value = 'clearkey';
+        handleDrmTypeChange();
+        clearKeysText.value = clearKeys;
     }
 
-    async function init() {
-        drmTypeSelect = document.getElementById('drmType');
-        drmMethodSelect = document.getElementById('drmMethod');
-        urlInput = document.getElementById('url');
-        clearKeysText = document.getElementById('clearKeys');
-        licenseUrlInput = document.getElementById('licenseUrl');
-        playButton = document.getElementById('playButton');
+    initPlayer();
+}
 
-        await detectDRMSupport();
+async function init() {
+    drmTypeSelect = document.getElementById('drmType');
+    drmMethodSelect = document.getElementById('drmMethod');
+    urlInput = document.getElementById('url');
+    clearKeysText = document.getElementById('clearKeys');
+    licenseUrlInput = document.getElementById('licenseUrl');
+    playButton = document.getElementById('playButton');
 
-        const form = document.getElementById('player-form');
-        form.addEventListener('submit', handleFormSubmit);
+    await detectDRMSupport();
 
-        drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+    const form = document.getElementById('player-form');
+    form.addEventListener('submit', handleFormSubmit);
 
-        drmMethodSelect.addEventListener('change', validateInputs);
-        urlInput.addEventListener('input', validateInputs);
-        clearKeysText.addEventListener('input', validateInputs);
-        licenseUrlInput.addEventListener('input', validateInputs);
+    drmTypeSelect.addEventListener('change', handleDrmTypeChange);
+    drmMethodSelect.addEventListener('change', validateInputs);
+    urlInput.addEventListener('input', validateInputs);
+    clearKeysText.addEventListener('input', validateInputs);
+    licenseUrlInput.addEventListener('input', validateInputs);
 
-        const testStreamButton = document.getElementById('testStreamButton');
-        testStreamButton.addEventListener('click', handleTestStream);
+    document.addEventListener('shaka-ui-loaded', initPlayer);
 
-        document.addEventListener('shaka-ui-loaded', initPlayer);
+    validateInputs();
+}
 
-        validateInputs();
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', init);
