@@ -51,17 +51,16 @@
                 ></textarea>
             </div>
 
-            <!-- Headers (for authorization or custom headers) -->
-<div class="mb-3" id="headersContainer" style="display: none;">
-    <label for="headers" class="form-label">Headers (JSON format):</label>
-    <textarea
-        class="form-control"
-        id="headers"
-        rows="4"
-        placeholder='{"Authorization": "Bearer your-token"}'
-    ></textarea>
-</div>
-
+            <!-- Headers (for ClearKeys) -->
+            <div class="mb-3" id="headersContainerKeys" style="display: none;">
+                <label for="headersKeys" class="form-label">Headers (JSON format):</label>
+                <textarea
+                    class="form-control"
+                    id="headersKeys"
+                    rows="4"
+                    placeholder='{"Authorization": "Bearer your-token"}'
+                ></textarea>
+            </div>
 
             <!-- DRM Method (widevine/playready) -->
             <div class="mb-3" id="methodContainer" style="display: none;">
@@ -84,6 +83,17 @@
                 >
             </div>
 
+            <!-- Headers (for License URL) -->
+            <div class="mb-3" id="headersContainerLicense" style="display: none;">
+                <label for="headersLicense" class="form-label">Headers (JSON format):</label>
+                <textarea
+                    class="form-control"
+                    id="headersLicense"
+                    rows="4"
+                    placeholder='{"Authorization": "Bearer your-token"}'
+                ></textarea>
+            </div>
+
             <!-- PLAY button -->
             <div class="mb-3 text-center">
                 <input
@@ -93,22 +103,6 @@
                     disabled
                     id="playButton"
                 >
-            </div>
-
-            <!-- Wanna play a Test Stream? -->
-            <div class="mb-3 text-center" style="display: none;" id="testStreamContainer">
-                <button
-                    type="button"
-                    id="testStreamButton"
-                    class="btn btn-secondary w-100 mb-2"
-                >Wanna play a Test Stream? Click me!</button>
-            </div>
-
-            <!-- Go back to / -->
-            <div class="mb-3 text-center">
-                <a href="https://irylek.github.io/" class="btn btn-secondary w-100">
-                    Go back to /
-                </a>
             </div>
         </form>
     </div>
