@@ -79,19 +79,22 @@ function handleDrmTypeChange() {
     const headersContainerKeys = document.getElementById('headersContainerKeys');
     const headersContainerLicense = document.getElementById('headersContainerLicense');
 
+    // Reset display first
+    keysContainer.style.display = 'none';
+    methodContainer.style.display = 'none';
+    licenseUrlContainer.style.display = 'none';
+    headersContainerKeys.style.display = 'none';
+    headersContainerLicense.style.display = 'none';
+
     if (drmType === 'clearkey') {
         keysContainer.style.display = 'block';
-        methodContainer.style.display = 'none';
-        licenseUrlContainer.style.display = 'none';
         headersContainerKeys.style.display = 'block';
-        headersContainerLicense.style.display = 'none';
     } else {
-        keysContainer.style.display = 'none';
         methodContainer.style.display = 'block';
         licenseUrlContainer.style.display = 'block';
-        headersContainerKeys.style.display = 'none';
         headersContainerLicense.style.display = 'block';
     }
+
     validateInputs();
 }
 
