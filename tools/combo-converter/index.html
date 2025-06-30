@@ -1,1 +1,164 @@
-funny
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Extractor</title>
+  <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #1e1e1e;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    .container {
+        background: #2b2b2b;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+    }
+    .top-bar {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .back-link {
+        font-size: 1rem;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+    h1 {
+        color: #ffffff;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    p {
+        color: #cccccc;
+        margin-bottom: 20px;
+        font-size: 1rem;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #444;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        resize: none;
+        box-sizing: border-box;
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    #output {
+        margin-top: 20px;
+        padding: 20px;
+        background: #333333;
+        border: 1px solid #444;
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 1rem;
+        word-break: break-word;
+        position: relative;
+        min-height: 50px;
+        text-align: left;
+    }
+    #copyButton {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #444;
+        border: none;
+        color: #fff;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    #copyButton.copied {
+        background-color: #28a745;
+        color: #ffffff;
+        cursor: default;
+    }
+    #copyButton:hover:not(.copied) {
+        background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="#" class="back-link" onclick="location.reload()">⟵ Wyczyść</a>
+    </div>
+    <h1>Extractor mail:hasło</h1>
+    <p>Wklej logi (combo) poniżej i kliknij „Przetwórz”.</p>
+    <textarea id="input" placeholder="ścieżka:linia:link:mail:hasło albo dowolna linia z mail:hasło"></textarea>
+    <button id="run">Przetwórz</button>
+    <div id="output">
+      <button id="copyButton">Kopiuj</button>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('run');
+    const input = document.getElementById('input');
+    const resultDiv = document.getElementById('result');
+    const copyBtn = document.getElementById('copyButton');
+
+    // regex na mail:hasło (mail standardowy, hasło bez spacji i dwukropków)
+    const credRe = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\s*:\s*([^\s:]+)/g;
+
+    runBtn.addEventListener('click', () => {
+      const text = input.value;
+      const seen = new Set();
+      let match;
+      while ((match = credRe.exec(text)) !== null) {
+        seen.add(`${match[1]}:${match[2]}`);
+      }
+      const arr = Array.from(seen);
+      if (!arr.length) {
+        resultDiv.textContent = 'Brak znalezionych par mail:hasło.';
+      } else {
+        resultDiv.innerHTML = arr.join('<br>');
+      }
+      copyBtn.classList.remove('copied');
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const txt = resultDiv.innerText;
+      if (!txt) return;
+      navigator.clipboard.writeText(txt).then(() => {
+        copyBtn.textContent = 'Skopiowano!';
+        copyBtn.classList.add('copied');
+      });
+    });
+  </script>
+</body>
+</html>
