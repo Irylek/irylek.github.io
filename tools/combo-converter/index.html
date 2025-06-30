@@ -22,32 +22,9 @@
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         width: 90%;
-        max-width: 600px;
+        max-width: 800px;
         text-align: center;
         position: relative;
-    }
-    .top-bar {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    .back-link {
-        font-size: 1rem;
-        color: #007bff;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .back-link:hover {
-        text-decoration: underline;
-    }
-    h1 {
-        color: #ffffff;
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-    }
-    p {
-        color: #cccccc;
-        margin-bottom: 20px;
-        font-size: 1rem;
     }
     textarea {
         width: 100%;
@@ -71,6 +48,7 @@
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s;
+        margin-right: 10px;
     }
     button:hover {
         background-color: #0056b3;
@@ -85,79 +63,99 @@
         font-size: 1rem;
         word-break: break-word;
         position: relative;
-        min-height: 50px;
+    }
+    table.cred-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table.cred-table th,
+    table.cred-table td {
+        border: 1px solid #444;
+        padding: 8px;
         text-align: left;
     }
-    #copyButton {
-        position: absolute;
-        top: 10px;
-        right: 10px;
+    table.cred-table th {
         background-color: #444;
-        border: none;
+    }
+    #copyButton {
+        background-color: #007bff;
         color: #fff;
+        border: none;
         padding: 5px 10px;
         cursor: pointer;
         font-size: 0.9rem;
         border-radius: 4px;
-        transition: background-color 0.3s;
+        position: absolute;
+        top: 10px;
+        right: 10px;
     }
     #copyButton.copied {
         background-color: #28a745;
-        color: #ffffff;
-        cursor: default;
-    }
-    #copyButton:hover:not(.copied) {
-        background-color: #666;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="top-bar">
-      <a href="#" class="back-link" onclick="location.reload()">⟵ Wyczyść</a>
-    </div>
-    <h1>Extractor mail:hasło</h1>
-    <p>Wklej logi (combo) poniżej i kliknij „Przetwórz”.</p>
-    <textarea id="input" placeholder="ścieżka:linia:link:mail:hasło albo dowolna linia z mail:hasło"></textarea>
+    <h1>Extractor CSV</h1>
+    <textarea id="input" placeholder="wklej logi w formacie plik:linia:link:mail:hasło"></textarea><br>
     <button id="run">Przetwórz</button>
-    <div id="output">
-      <button id="copyButton">Kopiuj</button>
-      <div id="result"></div>
-    </div>
+    <button id="clear">Wyczyść</button>
+    <div id="output"></div>
   </div>
-
   <script>
+    const lineRe = /^([^:\\r\\n]+):(\\d+):\\s*(\\S+):\\s*([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}):\\s*([^\\s:]+)/gm;
     const runBtn = document.getElementById('run');
+    const clearBtn = document.getElementById('clear');
     const input = document.getElementById('input');
-    const resultDiv = document.getElementById('result');
-    const copyBtn = document.getElementById('copyButton');
-
-    // regex na mail:hasło (mail standardowy, hasło bez spacji i dwukropków)
-    const credRe = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\s*:\s*([^\s:]+)/g;
+    const output = document.getElementById('output');
 
     runBtn.addEventListener('click', () => {
-      const text = input.value;
-      const seen = new Set();
-      let match;
-      while ((match = credRe.exec(text)) !== null) {
-        seen.add(`${match[1]}:${match[2]}`);
-      }
-      const arr = Array.from(seen);
-      if (!arr.length) {
-        resultDiv.textContent = 'Brak znalezionych par mail:hasło.';
-      } else {
-        resultDiv.innerHTML = arr.join('<br>');
-      }
-      copyBtn.classList.remove('copied');
+        const text = input.value;
+        const seen = new Set();
+        let match;
+        const rows = [];
+        while ((match = lineRe.exec(text)) !== null) {
+            const [_, file, line, link, email, pwd] = match;
+            const key = `${email.toLowerCase()}:${pwd}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                rows.push({ file, line, link, email, pwd });
+            }
+        }
+        if (!rows.length) {
+            output.textContent = 'Brak danych.';
+            return;
+        }
+        // Create CSV content
+        let csv = 'Plik;Linia;Link;Email;Haslo\n';
+        rows.forEach(r => {
+            csv += `"${r.file}";${r.line};${r.link};${r.email};${r.pwd}\n`;
+        });
+        // Display HTML table
+        let html = '<button id="copyButton">Kopiuj CSV</button>';
+        html += '<table class="cred-table"><thead><tr>'
+            + '<th>Plik</th><th>Linia</th><th>Link</th><th>Email</th><th>Hasło</th>'
+            + '</tr></thead><tbody>';
+        rows.forEach(r => {
+            html += '<tr>'
+                + `<td>${r.file}</td><td>${r.line}</td><td>${r.link}</td>`
+                + `<td>${r.email}</td><td>${r.pwd}</td>`
+                + '</tr>';
+        });
+        html += '</tbody></table>';
+        output.innerHTML = html;
+        document.getElementById('copyButton').onclick = () => {
+            navigator.clipboard.writeText(csv).then(() => {
+                const btn = document.getElementById('copyButton');
+                btn.textContent = 'Skopiowano!';
+                btn.classList.add('copied');
+            });
+        };
     });
 
-    copyBtn.addEventListener('click', () => {
-      const txt = resultDiv.innerText;
-      if (!txt) return;
-      navigator.clipboard.writeText(txt).then(() => {
-        copyBtn.textContent = 'Skopiowano!';
-        copyBtn.classList.add('copied');
-      });
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        output.innerHTML = '';
     });
   </script>
 </body>
