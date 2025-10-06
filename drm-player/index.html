@@ -8,24 +8,20 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
         crossorigin="anonymous"
     >
-    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.8/dist/shaka-player.ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.8/dist/shaka-player.compiled.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.9/shaka-player.compiled.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player/dist/controls.min.css" />
 </head>
 <body>
 
 <div id="container">
     <div id="settings">
         <form id="player-form">
-
             <!-- Manifest -->
             <div class="mb-3">
                 <label for="url" class="form-label">Manifest:</label>
                 <input type="text" class="form-control" id="url" placeholder="https://example.com/manifest.mpd">
             </div>
-
             <!-- DRM Type -->
             <div class="mb-3">
                 <label for="drmType" class="form-label">Type:</label>
@@ -34,19 +30,16 @@
                     <option value="license">License URL</option>
                 </select>
             </div>
-
             <!-- ClearKeys -->
             <div class="mb-3" id="keysContainer">
                 <label for="clearKeys" class="form-label">Keys (Multiple Supported!):</label>
                 <textarea class="form-control" id="clearKeys" rows="8" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
             </div>
-
             <!-- Headers (for ClearKeys) -->
             <div class="mb-3" id="headersContainerKeys" style="display: none;">
                 <label for="headersKeys" class="form-label">Headers (JSON format):</label>
                 <textarea class="form-control" id="headersKeys" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
             </div>
-
             <!-- DRM Method -->
             <div class="mb-3" id="methodContainer" style="display: none;">
                 <label for="drmMethod" class="form-label">Method:</label>
@@ -56,35 +49,25 @@
                     <option value="playready">PlayReady</option>
                 </select>
             </div>
-
             <!-- License URL -->
             <div class="mb-3" id="licenseUrlContainer" style="display: none;">
                 <label for="licenseUrl" class="form-label">License URL:</label>
                 <input type="text" class="form-control" id="licenseUrl" placeholder="https://example.com/drm/AcquireLicense">
             </div>
-
             <!-- Headers (for License URL) -->
             <div class="mb-3" id="headersContainerLicense" style="display: none;">
                 <label for="headersLicense" class="form-label">Headers (JSON format):</label>
                 <textarea class="form-control" id="headersLicense" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
             </div>
-
-            <!-- PLAY button -->
-            <div class="mb-3 text-center">
-                <input type="submit" class="btn btn-primary w-100 mb-2" value="Play" disabled id="playButton">
-            </div>
-
-            <!-- Go back to / -->
-            <div class="mb-3 text-center">
-                <a href="https://irylek.github.io/" class="btn btn-secondary w-100">Go back to /</a>
-            </div>
-
+            <button type="submit" class="btn btn-primary" id="playButton">Odtwórz</button>
+            <button type="button" class="btn btn-secondary" id="testStreamButton">Test Widevine</button>
         </form>
     </div>
 
-    <div data-shaka-player-container id="player" data-shaka-player-cast-receiver-id="1BA79154">
-        <video data-shaka-player id="video" autoplay crossorigin="anonymous"></video>
+    <div id="videoContainer" class="mt-4">
+        <video id="video" width="100%" height="400" controls poster="https://shaka-player-demo.appspot.com/assets/poster.jpg"></video>
     </div>
 </div>
+
 </body>
 </html>
