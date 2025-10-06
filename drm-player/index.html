@@ -11,133 +11,63 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.9/shaka-player.compiled.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css" />
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: #111; /* full page dark background */
-        }
-        body, #container {
-            height: 100vh;
-            min-height: 100vh;
-        }
-        .player-row {
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
-        }
-        .player-video-col {
-            flex: 0 0 600px; /* fixed width for video area */
-            max-width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            background: #111; /* dark background for video column */
-            height: 100vh;
-        }
-        #videoContainer {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 60vh; /* video takes 60% of screen height */
-            margin: 0 auto;
-            background: #111; /* dark background behind video */
-            border-radius: 8px;
-        }
-        #video {
-            display: block;
-            width: 100%;
-            max-width: 600px;
-            height: 100%;
-            max-height: 60vh;
-            background: #111;
-            margin: 0 auto;
-        }
-        .player-form-col {
-            flex: 1;
-            display: none; /* Hide the form column, or set width to small if you want it visible */
-        }
-        /* Hide Shaka logo/watermark if present */
-        .shaka-logo-container, .shaka-watermark {
-            display: none !important;
-        }
-        @media (max-width: 700px) {
-            .player-row {
-                flex-direction: column;
-            }
-            .player-video-col {
-                width: 100vw;
-                min-width: 100vw;
-                max-width: 100vw;
-                height: 100vh;
-            }
-            #videoContainer, #video {
-                max-width: 100vw;
-            }
-        }
-    </style>
 </head>
 <body>
-<div id="container" class="container-fluid p-0 m-0" style="height:100vh;">
-    <div class="player-row">
-        <div class="player-video-col">
-            <div id="videoContainer">
-                <video id="video" controls></video>
+
+<div id="container">
+    <div id="settings">
+        <form id="player-form">
+            <!-- Manifest -->
+            <div class="mb-3">
+                <label for="url" class="form-label">Manifest:</label>
+                <input type="text" class="form-control" id="url" placeholder="https://example.com/manifest.mpd">
             </div>
-        </div>
-        <div class="player-form-col">
-            <div id="settings">
-                <form id="player-form">
-                    <!-- Manifest -->
-                    <div class="mb-3">
-                        <label for="url" class="form-label">Manifest:</label>
-                        <input type="text" class="form-control" id="url" placeholder="https://example.com/manifest.mpd">
-                    </div>
-                    <!-- DRM Type -->
-                    <div class="mb-3">
-                        <label for="drmType" class="form-label">Type:</label>
-                        <select id="drmType" class="form-control">
-                            <option value="clearkey">ClearKeys</option>
-                            <option value="license">License URL</option>
-                        </select>
-                    </div>
-                    <!-- ClearKeys -->
-                    <div class="mb-3" id="keysContainer">
-                        <label for="clearKeys" class="form-label">Keys (Multiple Supported!):</label>
-                        <textarea class="form-control" id="clearKeys" rows="8" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
-                    </div>
-                    <!-- Headers (for ClearKeys) -->
-                    <div class="mb-3" id="headersContainerKeys" style="display: none;">
-                        <label for="headersKeys" class="form-label">Headers (JSON format):</label>
-                        <textarea class="form-control" id="headersKeys" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
-                    </div>
-                    <!-- DRM Method -->
-                    <div class="mb-3" id="methodContainer" style="display: none;">
-                        <label for="drmMethod" class="form-label">Method:</label>
-                        <select id="drmMethod" class="form-control">
-                            <option value=""> </option>
-                            <option value="widevine">Widevine</option>
-                            <option value="playready">PlayReady</option>
-                        </select>
-                    </div>
-                    <!-- License URL -->
-                    <div class="mb-3" id="licenseUrlContainer" style="display: none;">
-                        <label for="licenseUrl" class="form-label">License URL:</label>
-                        <input type="text" class="form-control" id="licenseUrl" placeholder="https://example.com/drm/AcquireLicense">
-                    </div>
-                    <!-- Headers (for License URL) -->
-                    <div class="mb-3" id="headersContainerLicense" style="display: none;">
-                        <label for="headersLicense" class="form-label">Headers (JSON format):</label>
-                        <textarea class="form-control" id="headersLicense" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="playButton">Play</button>
-                    <button type="button" class="btn btn-secondary" id="testStreamButton">Test DRM</button>
-                </form>
+            <!-- DRM Type -->
+            <div class="mb-3">
+                <label for="drmType" class="form-label">Type:</label>
+                <select id="drmType" class="form-control">
+                    <option value="clearkey">ClearKeys</option>
+                    <option value="license">License URL</option>
+                </select>
             </div>
-        </div>
+            <!-- ClearKeys -->
+            <div class="mb-3" id="keysContainer">
+                <label for="clearKeys" class="form-label">Keys (Multiple Supported!):</label>
+                <textarea class="form-control" id="clearKeys" rows="8" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
+            </div>
+            <!-- Headers (for ClearKeys) -->
+            <div class="mb-3" id="headersContainerKeys" style="display: none;">
+                <label for="headersKeys" class="form-label">Headers (JSON format):</label>
+                <textarea class="form-control" id="headersKeys" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
+            </div>
+            <!-- DRM Method -->
+            <div class="mb-3" id="methodContainer" style="display: none;">
+                <label for="drmMethod" class="form-label">Method:</label>
+                <select id="drmMethod" class="form-control">
+                    <option value=""> </option>
+                    <option value="widevine">Widevine</option>
+                    <option value="playready">PlayReady</option>
+                </select>
+            </div>
+            <!-- License URL -->
+            <div class="mb-3" id="licenseUrlContainer" style="display: none;">
+                <label for="licenseUrl" class="form-label">License URL:</label>
+                <input type="text" class="form-control" id="licenseUrl" placeholder="https://example.com/drm/AcquireLicense">
+            </div>
+            <!-- Headers (for License URL) -->
+            <div class="mb-3" id="headersContainerLicense" style="display: none;">
+                <label for="headersLicense" class="form-label">Headers (JSON format):</label>
+                <textarea class="form-control" id="headersLicense" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="playButton">Play</button>
+            <button type="button" class="btn btn-secondary" id="testStreamButton">Test DRM</button>
+        </form>
+    </div>
+
+    <div id="videoContainer" class="mt-4">
+        <video id="video" width="100%" height="400" controls poster="https://shaka-player-demo.appspot.com/assets/poster.jpg"></video>
     </div>
 </div>
+
 </body>
 </html>
