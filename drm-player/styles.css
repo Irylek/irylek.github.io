@@ -1,41 +1,77 @@
 body {
-            background-color: #000;
-            color: #fff;
-        }
-        #container {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
-        #settings {
-            width: 480px;
-            height: 100%;
-            padding: 30px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #111;
-        }
-        .form-control {
-            font-size: .875rem;
-            background-color: #222;
-            color: #fff;
-            border: 1px solid #555;
-        }
-        #player {
-            width: calc(100% - 480px);
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: black;
-        }
-        video {
-            width: 100%;
-            height: 100vh;
-        }
-        .btn-primary {
-            background-color: #0d6efd !important;
-            border-color: #0d6efd !important;
-        }
+    background-color: #000;
+    color: #fff;
+}
+
+#container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+#settings {
+    width: 480px;
+    height: 100%;
+    padding: 30px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #111;
+    overflow-y: auto;
+}
+
+.form-control {
+    font-size: .875rem;
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+#player {
+    width: calc(100% - 480px);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+}
+
+video {
+    width: 100%;
+    height: 100vh;
+}
+
+.btn-primary {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+/* Missing keys overlay */
+
+#missingKeysOverlay {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(20, 20, 20, 0.75);
+    padding: 10px;
+    border-radius: 6px;
+    max-width: 320px;
+    color: #fff;
+    font-size: 13px;
+    z-index: 9999;
+    display: none;
+}
+
+#missingKeysTitle {
+    font-weight: bold;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 3px;
+}
+
+#missingKeysList {
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: nowrap;
+}
