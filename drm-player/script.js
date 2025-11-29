@@ -20,12 +20,10 @@ const playreadyConfigs = [{
 }];
 
 // --- GLOBAL STORAGE ---
-// KID → { height, bitrate }
-let discoveredTracks = new Map();
-
+let discoveredTracks = new Map();   // kid → {height, bitrate}
 let drmTypeSelect, drmMethodSelect, urlInput, clearKeysText, licenseUrlInput, playButton;
 
-// HEX converter
+// Convert ArrayBuffer → hex
 function bufferToHex(buf) {
     return Array.prototype.map.call(
         new Uint8Array(buf),
@@ -38,25 +36,17 @@ async function detectDRMSupport() {
     const widevineOption = drmMethodSelect.querySelector('option[value="widevine"]');
     const playreadyOption = drmMethodSelect.querySelector('option[value="playready"]');
 
-    let widevineText = "Widevine";
-    let playreadyText = "PlayReady";
+    let t1 = "Widevine";
+    let t2 = "PlayReady";
 
-    try {
-        await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineConfigs);
-    } catch {
-        widevineText += " (Unsupported)";
-        widevineOption.disabled = true;
-    }
+    try { await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineConfigs); }
+    catch { t1 += " (Unsupported)"; widevineOption.disabled = true; }
 
-    try {
-        await navigator.requestMediaKeySystemAccess('com.microsoft.playready', playreadyConfigs);
-    } catch {
-        playreadyText += " (Unsupported)";
-        playreadyOption.disabled = true;
-    }
+    try { await navigator.requestMediaKeySystemAccess('com.microsoft.playready', playreadyConfigs); }
+    catch { t2 += " (Unsupported)"; playreadyOption.disabled = true; }
 
-    widevineOption.textContent = widevineText;
-    playreadyOption.textContent = playreadyText;
+    widevineOption.textContent = t1;
+    playreadyOption.textContent = t2;
 }
 
 // --- Validation ---
@@ -69,18 +59,10 @@ function validateInputs() {
 
     let valid = false;
 
-    if (drmType === "clearkey") {
-        valid = (urlVal !== "" && clearKeysVal !== "");
-    } else {
-        const selectedOption = drmMethodSelect.querySelector("option:checked");
-        const isOptionDisabled = selectedOption ? selectedOption.disabled : false;
-
-        valid = (
-            drmMethodVal !== "" &&
-            !isOptionDisabled &&
-            urlVal !== "" &&
-            licenseUrlVal !== ""
-        );
+    if (drmType === "clearkey") valid = (urlVal !== "" && clearKeysVal !== "");
+    else {
+        const sel = drmMethodSelect.querySelector("option:checked");
+        valid = (drmMethodVal !== "" && !sel.disabled && urlVal !== "" && licenseUrlVal !== "");
     }
 
     playButton.disabled = !valid;
@@ -98,7 +80,6 @@ function handleDrmTypeChange() {
         keysContainer.style.display = "block";
         methodContainer.style.display = "none";
         licenseUrlContainer.style.display = "none";
-
         drmMethodSelect.value = "";
         licenseUrlInput.value = "";
     } else {
@@ -132,7 +113,41 @@ function forceHighestQuality(player) {
     player.selectVariantTrack(best, true);
 }
 
-// --- Overlay updater ---
+// --- HUD: FPS / Quality / Current Kid Status ---
+function updateHUD() {
+    const hud = document.getElementById("qualityHud");
+    if (!hud) return;
+
+    const player = window.player;
+    if (!player) return;
+
+    const stats = player.getStats();
+    const tracks = player.getVariantTracks();
+    const active = tracks.find(t => t.active);
+
+    if (!active) return;
+
+    const fps = stats.decodedFrames ? Math.round(stats.decodedFrames / (stats.playTime || 1)) : 0;
+
+    // find kid
+    let kid = "unknown";
+    if (active.drmInfos?.length > 0) {
+        const info = active.drmInfos[0];
+        if (info.keyIds && info.keyIds.size > 0) kid = [...info.keyIds][0];
+    }
+
+    const entered = parseClearKeys(clearKeysText.value);
+    const haveKey = entered[kid] !== undefined;
+
+    hud.innerHTML = `
+        <b>Quality:</b> ${active.height}p<br>
+        <b>Bitrate:</b> ${Math.round(active.bandwidth / 1000)} kbps<br>
+        <b>FPS:</b> ${fps}<br>
+        <b>KID:</b> <code>${kid}</code> ${haveKey ? "✔️" : "❌"}
+    `;
+}
+
+// --- Overlay Missing / Available keys ---
 function showMissingKeysOverlay() {
     const overlay = document.getElementById("missingKeysOverlay");
     const list = document.getElementById("missingKeysList");
@@ -146,40 +161,40 @@ function showMissingKeysOverlay() {
     overlay.style.display = "block";
     list.innerHTML = "";
 
-    const enteredKeys = parseClearKeys(clearKeysText.value);
+    const entered = parseClearKeys(clearKeysText.value);
 
-    // sort by bitrate DESC
     const sorted = [...discoveredTracks.entries()]
-        .sort((a, b) => b[1].bitrate - a[1].bitrate);
+        .sort((a, b) => b[1].bitrate - a[1].bitrate); // highest first
 
     sorted.forEach(([kid, info]) => {
-        const haveKey = enteredKeys[kid] !== undefined;
+        const have = entered[kid] !== undefined;
 
         const line = document.createElement("div");
         line.innerHTML =
-            `${haveKey ? "✔️" : "❌"} | <code>${kid}</code> | ${info.height}p | ${info.bitrate} kbps`;
+            `${have ? "✔️" : "❌"} | <code>${kid}</code> | ${info.height}p | ${info.bitrate} kbps`;
+        line.style.color = have ? "#aaffaa" : "#ff9999";
 
-        line.style.color = haveKey ? "#aaffaa" : "#ff9999";
         list.appendChild(line);
     });
 }
 
 // --- Player init ---
 async function initPlayer() {
+    discoveredTracks.clear();
+
     const video = document.getElementById("video");
     const ui = video['ui'];
     const controls = ui.getControls();
     const player = controls.getPlayer();
-
     window.player = player;
-    window.ui = ui;
 
-    // detect KIDs live from init data
+    // Real-time KID capture
     video.addEventListener("encrypted", (e) => {
         if (e.keyId) {
-            const kidHex = bufferToHex(e.keyId);
-            // attach approximate resolution/bitrate later when tracks are loaded
-            discoveredTracks.set(kidHex, discoveredTracks.get(kidHex) || { height: 0, bitrate: 0 });
+            const hex = bufferToHex(e.keyId);
+            if (!discoveredTracks.has(hex)) {
+                discoveredTracks.set(hex, { height: 0, bitrate: 0 });
+            }
         }
         showMissingKeysOverlay();
     });
@@ -195,14 +210,9 @@ async function initPlayer() {
         const drmMethod = drmMethodSelect.value;
         const licenseUrl = licenseUrlInput.value;
 
-        const drmConfig = {
-            servers: {}
-        };
-
+        const drmConfig = { servers: {} };
         drmConfig.servers[
-            drmMethod === "widevine"
-                ? "com.widevine.alpha"
-                : "com.microsoft.playready"
+            drmMethod === "widevine" ? "com.widevine.alpha" : "com.microsoft.playready"
         ] = licenseUrl;
 
         player.configure({ drm: drmConfig });
@@ -210,24 +220,21 @@ async function initPlayer() {
 
     await player.load(url);
 
-    // map resolutions + bitrates to discovered KIDs
+    // load track metadata
     const tracks = player.getVariantTracks();
-    tracks.forEach(track => {
+    tracks.forEach(t => {
         const kidList = [];
 
-        if (track.drmInfos?.length > 0) {
-            for (let info of track.drmInfos) {
-                if (info.keyIds) {
-                    kidList.push(...info.keyIds);
-                }
+        if (t.drmInfos?.length > 0) {
+            for (let info of t.drmInfos) {
+                if (info.keyIds) kidList.push(...info.keyIds);
             }
         }
 
         kidList.forEach(kid => {
-            const hex = kid;
-            discoveredTracks.set(hex, {
-                height: track.height || 0,
-                bitrate: Math.round((track.bandwidth || 0) / 1000)
+            discoveredTracks.set(kid, {
+                height: t.height || 0,
+                bitrate: Math.round(t.bandwidth / 1000)
             });
         });
     });
@@ -237,6 +244,8 @@ async function initPlayer() {
     }
 
     showMissingKeysOverlay();
+    setInterval(updateHUD, 500);
+
     player.play();
 }
 
@@ -244,9 +253,6 @@ async function initPlayer() {
 function handleFormSubmit(e) {
     e.preventDefault();
     if (playButton.disabled) return;
-
-    discoveredTracks.clear();
-    showMissingKeysOverlay();
 
     initPlayer();
 }
