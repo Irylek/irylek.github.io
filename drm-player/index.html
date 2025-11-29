@@ -1,113 +1,501 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
     <title>DRM Player by Irylek</title>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-    <!-- Shaka newest -->
     <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.compiled.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css" />
 
-    <link rel="stylesheet" href="styles.css" />
-    <script src="script.js" defer></script>
-</head>
-<body>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+        }
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        #settings {
+            width: 480px;
+            height: 100%;
+            padding: 30px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #111;
+            overflow-y: auto;
+        }
+        .form-control {
+            font-size: .875rem;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+        #player {
+            width: calc(100% - 480px);
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #000;
+        }
+        video {
+            width: 100%;
+            height: 100vh;
+        }
+        .btn-primary {
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
 
+        #missingKeysOverlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(20, 20, 20, 0.88);
+            padding: 14px 14px 14px 14px;
+            border-radius: 10px;
+            width: 500px;
+            max-height: 520px;
+            overflow: hidden;
+            color: #fff;
+            font-size: 14px;
+            z-index: 9999;
+            display: none;
+            cursor: default;
+        }
+        #missingKeysTitle {
+            font-weight: bold;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #666;
+            padding-bottom: 4px;
+            cursor: move;
+            padding-right: 24px;
+        }
+        #missingKeysClose {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            border: none;
+            background: transparent;
+            color: #ccc;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        #missingKeysClose:hover {
+            color: #fff;
+        }
+        #missingKeysTabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .missing-tab {
+            flex: 1;
+            font-size: 12px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid #666;
+            background: #222;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+        }
+        .missing-tab.active {
+            background: #0d6efd;
+            border-color: #0d6efd;
+        }
+        #missingKeysListVideo,
+        #missingKeysListAudio {
+            max-height: 430px;
+            overflow-y: auto;
+        }
+        #missingKeysListVideo code,
+        #missingKeysListAudio code {
+            color: #ccc;
+        }
+        .pipe-sep {
+            color: #777;
+            font-weight: bold;
+            padding: 0 3px;
+        }
+    </style>
+</head>
+
+<body>
 <div id="container">
+
     <div id="settings">
         <form id="player-form">
 
-            <!-- Manifest -->
             <div class="mb-3">
-                <label for="url" class="form-label">Manifest:</label>
+                <label class="form-label">Manifest:</label>
                 <input type="text" class="form-control" id="url" placeholder="https://example.com/manifest.mpd">
             </div>
 
-            <!-- DRM Type -->
-            <div class="mb-3">
-                <label for="drmType" class="form-label">Type:</label>
-                <select id="drmType" class="form-control">
-                    <option value="clearkey">ClearKeys</option>
-                    <option value="license">License URL</option>
-                </select>
-            </div>
-
-            <!-- ClearKeys -->
             <div class="mb-3" id="keysContainer">
-                <label for="clearKeys" class="form-label">Keys (Multiple Supported!):</label>
-                <textarea class="form-control" id="clearKeys" rows="8" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
+                <label class="form-label">Keys (Multiple supported!):</label>
+                <textarea class="form-control" id="clearKeys" rows="6" placeholder="00000000000000000000000000000000:00000000000000000000000000000000"></textarea>
             </div>
 
-            <!-- Headers for ClearKeys -->
-            <div class="mb-3" id="headersContainerKeys" style="display: none;">
-                <label for="headersKeys" class="form-label">Headers (JSON format):</label>
-                <textarea class="form-control" id="headersKeys" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
-            </div>
-
-            <!-- DRM Method -->
-            <div class="mb-3" id="methodContainer" style="display: none;">
-                <label for="drmMethod" class="form-label">Method:</label>
-                <select id="drmMethod" class="form-control">
-                    <option value=""></option>
-                    <option value="widevine">Widevine</option>
-                    <option value="playready">PlayReady</option>
-                </select>
-            </div>
-
-            <!-- License URL -->
-            <div class="mb-3" id="licenseUrlContainer" style="display: none;">
-                <label for="licenseUrl" class="form-label">License URL:</label>
-                <input type="text" class="form-control" id="licenseUrl" placeholder="https://example.com/drm/AcquireLicense">
-            </div>
-
-            <!-- Headers for License URL -->
-            <div class="mb-3" id="headersContainerLicense" style="display: none;">
-                <label for="headersLicense" class="form-label">Headers (JSON format):</label>
-                <textarea class="form-control" id="headersLicense" rows="4" placeholder='{"Authorization": "Bearer your-token"}'></textarea>
-            </div>
-
-            <!-- CHECKBOX Force HQ -->
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="forceQualityCheckbox">
+                <input class="form-check-input" type="checkbox" id="forceQualityCheckbox" checked>
                 <label class="form-check-label" for="forceQualityCheckbox">
                     Force highest quality
                 </label>
             </div>
 
-            <!-- CHECKBOX Show missing KIDs -->
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="showMissingKeysCheckbox">
+                <input class="form-check-input" type="checkbox" id="showMissingKeysCheckbox" checked>
                 <label class="form-check-label" for="showMissingKeysCheckbox">
                     Show missing keys
                 </label>
             </div>
 
-            <!-- PLAY button -->
-            <div class="mb-3 text-center">
-                <input type="submit" class="btn btn-primary w-100 mb-2" value="Play" disabled id="playButton">
+            <div class="mb-3">
+                <input type="submit" class="btn btn-primary w-100" value="Play" id="playButton" disabled>
             </div>
 
-            <!-- Go home -->
-            <div class="mb-3 text-center">
+            <div class="mb-3">
                 <a href="https://irylek.github.io/" class="btn btn-secondary w-100">Go back to /</a>
             </div>
 
         </form>
     </div>
 
-    <div data-shaka-player-container id="player" data-shaka-player-cast-receiver-id="1BA79154">
-
-        <!-- missing keys overlay -->
+    <div id="player">
         <div id="missingKeysOverlay">
+            <button id="missingKeysClose" type="button">&times;</button>
             <div id="missingKeysTitle">Missing Keys</div>
-            <div id="missingKeysList"></div>
+
+            <div id="missingKeysTabs">
+                <div id="tabVideo" class="missing-tab active">Video Tracks</div>
+                <div id="tabAudio" class="missing-tab">Audio Tracks</div>
+            </div>
+
+            <div id="missingKeysListVideo"></div>
+            <div id="missingKeysListAudio" style="display:none;"></div>
         </div>
 
-        <video data-shaka-player id="video" autoplay crossorigin="anonymous"></video>
+        <video id="video" autoplay crossorigin="anonymous"></video>
     </div>
+
 </div>
+
+<script>
+    let player = null;
+    let uiOverlay = null;
+    let activeMissingTab = "video";
+
+    function parseClearKeys(str) {
+        const obj = {};
+        if (!str) return obj;
+        const text = String(str);
+        const keyCmdRegex = /--key\s+([^ \n\r\t,]+:[^ \n\r\t,]+)/gi;
+        let m;
+        while ((m = keyCmdRegex.exec(text)) !== null) {
+            const pair = m[1].trim();
+            const idx = pair.indexOf(":");
+            if (idx > 0) {
+                const kid = pair.slice(0, idx).trim();
+                const key = pair.slice(idx + 1).trim();
+                if (kid && key) obj[kid] = key;
+            }
+        }
+        const cleaned = text.replace(keyCmdRegex, " ");
+        cleaned
+            .split(/[\n, ]+/)
+            .map(s => s.trim())
+            .filter(Boolean)
+            .forEach(pair => {
+                const idx = pair.indexOf(":");
+                if (idx > 0) {
+                    const kid = pair.slice(0, idx).trim();
+                    const key = pair.slice(idx + 1).trim();
+                    if (kid && key && !obj[kid]) obj[kid] = key;
+                }
+            });
+        return obj;
+    }
+
+    function buildTrackRows() {
+        if (!player) return [];
+        const manifest = player.getManifest && player.getManifest();
+        const keyStatuses = player.getKeyStatuses ? player.getKeyStatuses() : {};
+        const statusKids = Object.keys(keyStatuses);
+        const clearKeysMap = parseClearKeys(document.getElementById("clearKeys").value);
+        const configuredKids = Object.keys(clearKeysMap);
+        const rowsMap = new Map();
+        if (!manifest || !manifest.variants) return [];
+        manifest.variants.forEach(variant => {
+            const v = variant.video;
+            const a = variant.audio;
+
+            if (v) {
+                const height = v.height || 0;
+                const fpsRaw = v.frameRate || 0;
+                const fps = fpsRaw ? Math.round(fpsRaw) : 0;
+                const vbps = v.bandwidth
+                    ? Math.round(v.bandwidth / 1000)
+                    : (variant.bandwidth ? Math.round(variant.bandwidth / 1000) : 0);
+                let kids = [];
+                if (v.keyIds && v.keyIds.size > 0) {
+                    kids = Array.from(v.keyIds);
+                }
+                if (!kids.length && statusKids.length > 0) {
+                    kids = [statusKids[0]];
+                }
+                if (!kids.length && configuredKids.length === 1) {
+                    kids = [configuredKids[0]];
+                }
+                if (!kids.length) {
+                    kids = ["unknown"];
+                }
+                kids.forEach(kid => {
+                    const label = height
+                        ? height + "p" + (fps || "")
+                        : "video" + (fps ? fps : "");
+                    const key = "video|" + kid + "|" + label;
+                    const existing = rowsMap.get(key);
+                    if (!existing || vbps > existing.bitrate) {
+                        rowsMap.set(key, {
+                            kid: kid,
+                            label: label,
+                            bitrate: vbps,
+                            kind: "video"
+                        });
+                    }
+                });
+            }
+
+            if (a) {
+                const sample = parseInt(a.audioSamplingRate || a.audioSamplingRate_ || 0, 10) || 0;
+                const channels = a.channelsCount || a.channels || 0;
+                const parts = [];
+                parts.push("audio");
+                if (channels) parts.push(channels + "ch");
+                if (sample) parts.push(sample / 1000 + "kHz");
+                const label = parts.join(" ");
+                const abps = a.bandwidth
+                    ? Math.round(a.bandwidth / 1000)
+                    : (variant.bandwidth ? Math.round(variant.bandwidth / 1000) : 0);
+                let kidsA = [];
+                if (a.keyIds && a.keyIds.size > 0) {
+                    kidsA = Array.from(a.keyIds);
+                }
+                if (!kidsA.length && statusKids.length > 0) {
+                    kidsA = [statusKids[0]];
+                }
+                if (!kidsA.length && configuredKids.length === 1) {
+                    kidsA = [configuredKids[0]];
+                }
+                if (!kidsA.length) {
+                    kidsA = ["unknown"];
+                }
+                kidsA.forEach(kid => {
+                    const key = "audio|" + kid + "|" + label;
+                    const existing = rowsMap.get(key);
+                    if (!existing || abps > existing.bitrate) {
+                        rowsMap.set(key, {
+                            kid: kid,
+                            label: label,
+                            bitrate: abps,
+                            kind: "audio"
+                        });
+                    }
+                });
+            }
+        });
+        return Array.from(rowsMap.values());
+    }
+
+    function updateMissingKeysOverlay() {
+        const overlay = document.getElementById("missingKeysOverlay");
+        const listVideo = document.getElementById("missingKeysListVideo");
+        const listAudio = document.getElementById("missingKeysListAudio");
+        const checkbox = document.getElementById("showMissingKeysCheckbox");
+        if (!checkbox.checked || !player) {
+            overlay.style.display = "none";
+            return;
+        }
+        const clearKeysMap = parseClearKeys(document.getElementById("clearKeys").value);
+        const rows = buildTrackRows();
+        const videoRows = rows.filter(r => r.kind === "video");
+        const audioRows = rows.filter(r => r.kind === "audio");
+        if (!videoRows.length && !audioRows.length) {
+            overlay.style.display = "none";
+            return;
+        }
+        overlay.style.display = "block";
+        listVideo.innerHTML = "";
+        listAudio.innerHTML = "";
+        videoRows.sort((a, b) => b.bitrate - a.bitrate);
+        audioRows.sort((a, b) => b.bitrate - a.bitrate);
+        function renderRows(rowsArr, target) {
+            rowsArr.forEach(row => {
+                const haveKey = row.kid !== "unknown" && !!clearKeysMap[row.kid];
+                const div = document.createElement("div");
+                div.style.color = haveKey ? "#aaffaa" : "#ff9999";
+                const bitrateLabel = row.bitrate ? row.bitrate + " kbps" : "unknown kbps";
+                div.innerHTML =
+                    (haveKey ? "✔️" : "❌") +
+                    '<span class="pipe-sep">|</span>' +
+                    "<code>" + row.kid + "</code>" +
+                    '<span class="pipe-sep">|</span>' +
+                    row.label +
+                    '<span class="pipe-sep">|</span>' +
+                    bitrateLabel;
+                target.appendChild(div);
+            });
+        }
+        renderRows(videoRows, listVideo);
+        renderRows(audioRows, listAudio);
+        if (activeMissingTab === "video") {
+            listVideo.style.display = "block";
+            listAudio.style.display = "none";
+        } else {
+            listVideo.style.display = "none";
+            listAudio.style.display = "block";
+        }
+    }
+
+    function forceHighestQuality() {
+        if (!player) return;
+        const variants = player.getVariantTracks ? player.getVariantTracks() : [];
+        if (!variants.length) return;
+        const best = variants.slice().sort((a, b) => b.bandwidth - a.bandwidth)[0];
+        player.configure({ abr: { enabled: false } });
+        player.selectVariantTrack(best, true);
+    }
+
+    function validateInputs() {
+        const url = document.getElementById("url").value.trim();
+        const clearKeys = document.getElementById("clearKeys").value.trim();
+        const ok = url !== "" && clearKeys !== "";
+        document.getElementById("playButton").disabled = !ok;
+        updateMissingKeysOverlay();
+    }
+
+    async function initPlayer() {
+        const video = document.getElementById("video");
+        const container = document.getElementById("player");
+        const url = document.getElementById("url").value.trim();
+        if (!shaka.Player.isBrowserSupported()) {
+            alert("Shaka: browser not supported");
+            return;
+        }
+        shaka.polyfill.installAll();
+        if (player) {
+            try { await player.destroy(); } catch (e) {}
+            player = null;
+            uiOverlay = null;
+        }
+        player = new shaka.Player(video);
+        uiOverlay = new shaka.ui.Overlay(player, container, video);
+        player.addEventListener("error", e => {
+            console.error("Shaka error", e.detail);
+        });
+        const clearKeys = parseClearKeys(document.getElementById("clearKeys").value);
+        player.configure({
+            drm: {
+                clearKeys: clearKeys
+            }
+        });
+        await player.load(url);
+        if (document.getElementById("forceQualityCheckbox").checked) {
+            forceHighestQuality();
+        }
+        updateMissingKeysOverlay();
+        video.play().catch(err => {
+            console.warn("video.play() blocked:", err);
+        });
+    }
+
+    function initDraggableOverlay() {
+        const overlay = document.getElementById("missingKeysOverlay");
+        const header = document.getElementById("missingKeysTitle");
+        let isDown = false;
+        let offsetX = 0;
+        let offsetY = 0;
+        header.addEventListener("mousedown", e => {
+            isDown = true;
+            offsetX = e.clientX - overlay.offsetLeft;
+            offsetY = e.clientY - overlay.offsetTop;
+            overlay.style.cursor = "grabbing";
+            document.body.style.userSelect = "none";
+        });
+        document.addEventListener("mouseup", () => {
+            isDown = false;
+            overlay.style.cursor = "default";
+            document.body.style.userSelect = "";
+        });
+        document.addEventListener("mousemove", e => {
+            if (!isDown) return;
+            overlay.style.left = e.clientX - offsetX + "px";
+            overlay.style.top = e.clientY - offsetY + "px";
+        });
+    }
+
+    function initMissingTabs() {
+        const tabVideo = document.getElementById("tabVideo");
+        const tabAudio = document.getElementById("tabAudio");
+        tabVideo.addEventListener("click", () => {
+            activeMissingTab = "video";
+            tabVideo.classList.add("active");
+            tabAudio.classList.remove("active");
+            updateMissingKeysOverlay();
+        });
+        tabAudio.addEventListener("click", () => {
+            activeMissingTab = "audio";
+            tabAudio.classList.add("active");
+            tabVideo.classList.remove("active");
+            updateMissingKeysOverlay();
+        });
+    }
+
+    function initMissingClose() {
+        const closeBtn = document.getElementById("missingKeysClose");
+        closeBtn.addEventListener("click", () => {
+            const overlay = document.getElementById("missingKeysOverlay");
+            const checkbox = document.getElementById("showMissingKeysCheckbox");
+            overlay.style.display = "none";
+            checkbox.checked = false;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ["url", "clearKeys"].forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener("input", validateInputs);
+            el.addEventListener("change", validateInputs);
+        });
+        document.getElementById("showMissingKeysCheckbox")
+            .addEventListener("change", updateMissingKeysOverlay);
+        document.getElementById("player-form").addEventListener("submit", e => {
+            e.preventDefault();
+            if (!document.getElementById("playButton").disabled) {
+                initPlayer().catch(err => console.error(err));
+            }
+        });
+        initDraggableOverlay();
+        initMissingTabs();
+        initMissingClose();
+        validateInputs();
+    });
+</script>
 
 </body>
 </html>
